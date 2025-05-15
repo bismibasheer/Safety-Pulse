@@ -1,0 +1,440 @@
+{% extends 'User/Header.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="content-container">
+    <!-- Search Container -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by description...">
+        <div class="filter-options">
+            <label>
+                <input type="radio" name="filter" value="all" checked> <span>Show All</span>
+            </label>
+            <label>
+                <input type="radio" name="filter" value="articles"> <span>Articles Only</span>
+            </label>
+            <label>
+                <input type="radio" name="filter" value="videos"> <span>Videos Only</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Articles Section -->
+    <center><h2 id="articlesHeading">Articles</h2></center>
+    <div class="content-grid" id="articlesGrid">
+        {% for i in articles %}
+        <div class="content-card article-row">
+            <img src="{{ i.article_file.url }}" alt="Article Photo" onclick="openFullscreen(this, 'image', '{{ i.article_description }}')" />
+            <p><strong>#{{ forloop.counter }}</strong></p>
+            <p class="article-description">{{ i.article_description }}</p>
+            <!-- Download Button with Icon -->
+            <a href="{{ i.article_file.url }}" download class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Videos Section -->
+    <center><h2 id="videosHeading">Videos</h2></center>
+    <div class="content-grid" id="videosGrid">
+        {% for i in videos %}
+        <div class="content-card video-row">
+            <video width="300" height="200" controls onclick="openFullscreen(this, 'video', '{{ i.video_description }}')">
+                <source src="{{ i.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p><strong>#{{ forloop.counter }}</strong></p>
+            <p class="video-description">{{ i.video_description }}</p>
+            <!-- Download Button with Icon -->
+            <a href="{{ i.video_file.url }}" download class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Fullscreen Overlay -->
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+    <div class="fullscreen-content">
+        <div class="close-icon" onclick="closeFullscreen()">×</div>
+        <img id="fullscreenImage" src="" alt="Fullscreen Image" style="display: none;">
+        <video id="fullscreenVideo" controls style="display: none;">
+            <source id="fullscreenVideoSource" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<style>
+    :root {
+        --gradient-bg: linear-gradient(90deg, #012729, #008080);
+        --selected-text: #898989;
+        --text-dark: #1a1a1a;
+        --text-light: #757575;
+        --bg-light: #fff3e0;
+        --card-bg: #ffffff;
+        --border-color: #ffe0b2;
+        --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        --hover-shadow: 0 8px 25px rgb(4, 53, 80, 0.3);
+    }
+
+    .content-container {
+        width: 100%;
+        max-width: 1000px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        box-sizing: border-box;
+        animation: slideUp 0.6s ease-out;
+        margin: 20px auto;
+    }
+
+    h2 {
+        color: var(--text-dark);
+        font-size: 2em;
+        margin-bottom: 25px;
+        background: var(--gradient-bg);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 3px solid #008080;
+        padding-bottom: 10px;
+    }
+
+    .search-container {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: var(--gradient-bg);
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .search-container:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    #searchInput {
+        width: 100%;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 25px;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    #searchInput:focus {
+        box-shadow: inset 0 2px 8px rgb(4, 53, 80 0.3), 0 0 10px rgb(4, 53, 80 0.2);
+    }
+
+    .filter-options {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: var(--gradient-bg);
+        padding: 10px;
+        border-radius: 25px;
+        box-shadow: var(--shadow);
+    }
+
+    .filter-options label {
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.3);
+        transition: background 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    }
+
+    .filter-options label:hover {
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(1.05);
+    }
+
+    .filter-options input[type="radio"] {
+        display: none;
+    }
+
+    .filter-options input[type="radio"]:checked + span {
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--selected-text);
+        font-weight: bold;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .content-card {
+        background: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 15px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        border: 1px solid var(--border-color);
+    }
+
+    .content-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+    }
+
+    .content-card img, .content-card video {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .content-card img:hover, .content-card video:hover {
+        transform: scale(1.03);
+    }
+
+    .content-card p {
+        color: var(--text-light);
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+    .content-card strong {
+        color: var(--text-dark);
+        font-weight: bold;
+    }
+
+    /* Download Button with Icon */
+    .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 8px 16px;
+        background-color: #008080;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 13px;
+        transition: background-color 0.3s ease;
+        box-shadow: var(--shadow);
+    }
+
+    .download-btn i {
+        font-size: 16px;
+    }
+
+    .download-btn:hover {
+        background-color: #015f5f;
+    }
+
+    .fullscreen-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+    }
+
+    .fullscreen-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .fullscreen-content {
+        position: relative;
+        max-width: 90%;
+        max-height: 90vh;
+    }
+
+    .fullscreen-content img, .fullscreen-content video {
+        width: 100%;
+        height: auto;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 5px;
+    }
+
+    .close-icon {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #008080;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .close-icon:hover {
+        transform: scale(1.2);
+        color: #4d4847;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 600px) {
+        .content-container {
+            padding: 15px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        #searchInput {
+            font-size: 14px;
+            padding: 10px 15px;
+        }
+
+        .filter-options {
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 5px;
+        }
+
+        .filter-options label {
+            width: 100%;
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .content-card img, .content-card video {
+            height: 150px;
+        }
+
+        .fullscreen-content img, .fullscreen-content video {
+            max-height: 80vh;
+        }
+    }
+</style>
+
+<script>
+    // Debugging: Log when the script runs
+    console.log("Script loaded");
+
+    // Get references to the search input and filter options
+    const searchInput = document.getElementById('searchInput');
+    const filterOptions = document.querySelectorAll('input[name="filter"]');
+    const articlesGrid = document.getElementById('articlesGrid');
+    const videosGrid = document.getElementById('videosGrid');
+    const articlesHeading = document.getElementById('articlesHeading');
+    const videosHeading = document.getElementById('videosHeading');
+    const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+    const fullscreenImage = document.getElementById('fullscreenImage');
+    const fullscreenVideo = document.getElementById('fullscreenVideo');
+    const fullscreenVideoSource = document.getElementById('fullscreenVideoSource');
+
+    // Add event listeners
+    searchInput.addEventListener('input', filterContent);
+    filterOptions.forEach(option => option.addEventListener('change', filterContent));
+
+    function filterContent() {
+        console.log("Filtering content...");
+
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedFilter = document.querySelector('input[name="filter"]:checked').value;
+
+        // Filter articles
+        const articleCards = document.querySelectorAll('.article-row');
+        let articleMatch = false;
+        articleCards.forEach(card => {
+            const description = card.querySelector('.article-description').textContent.toLowerCase();
+            if (description.includes(searchTerm)) {
+                card.classList.remove('hidden');
+                articleMatch = true;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        // Filter videos
+        const videoCards = document.querySelectorAll('.video-row');
+        let videoMatch = false;
+        videoCards.forEach(card => {
+            const description = card.querySelector('.video-description').textContent.toLowerCase();
+            if (description.includes(searchTerm)) {
+                card.classList.remove('hidden');
+                videoMatch = true;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        // Show/hide grids based on filter selection
+        if (selectedFilter === 'articles') {
+            articlesGrid.style.display = articleMatch ? 'grid' : 'none';
+            videosGrid.style.display = 'none';
+            articlesHeading.style.display = articleMatch ? 'block' : 'none';
+            videosHeading.style.display = 'none';
+        } else if (selectedFilter === 'videos') {
+            videosGrid.style.display = videoMatch ? 'grid' : 'none';
+            articlesGrid.style.display = 'none';
+            videosHeading.style.display = videoMatch ? 'block' : 'none';
+            articlesHeading.style.display = 'none';
+        } else {
+            articlesGrid.style.display = 'grid';
+            videosGrid.style.display = 'grid';
+            articlesHeading.style.display = 'block';
+            videosHeading.style.display = 'block';
+        }
+    }
+
+    function openFullscreen(element, type, description) {
+        if (type === 'image') {
+            fullscreenImage.src = element.src;
+            fullscreenImage.style.display = 'block';
+            fullscreenVideo.style.display = 'none';
+        } else if (type === 'video') {
+            fullscreenVideoSource.src = element.querySelector('source').src;
+            fullscreenVideo.load();
+            fullscreenVideo.style.display = 'block';
+            fullscreenImage.style.display = 'none';
+        }
+        fullscreenOverlay.classList.add('active');
+    }
+
+    function closeFullscreen() {
+        fullscreenOverlay.classList.remove('active');
+    }
+</script>
+{% endblock %}

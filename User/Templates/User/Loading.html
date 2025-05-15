@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3 Second Loading Screen</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    #loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #1e293b;
+      color: white;
+      font-size: 2rem;
+    }
+
+    #content {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">Loading...</div>
+
+  <div id="content">
+    <h1>{{msg}}</h1>
+    <p>Redirecting... After 3 seconds</p>
+  </div>
+</body>
+</html>
+{% if msg %}
+<script>
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }, 10000);
+    window.location="{% url 'User:postcomplaint' id %}"
+</script>
+{% endif %}

@@ -1,0 +1,88 @@
+{% extends 'User/Header.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Withdraw Points</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .withdraw-form {
+            width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .withdraw-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #178581;
+        }
+        .withdraw-form input[type="number"],
+        .withdraw-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .withdraw-form button {
+            width: 100%;
+            background-color: #178581;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .withdraw-form button:hover {
+            background-color: #136e6a;
+        }
+        .withdraw-form button:disabled {
+            background-color: #a3bffa;
+            cursor: not-allowed;
+        }
+        .withdraw-form button:disabled:hover {
+            background-color: #a3bffa;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .remark {
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="withdraw-form">
+    <h2>Withdraw Points</h2>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="number" name="amount" placeholder="Enter amount to withdraw" required min="1" max="{{ available_points }}">
+        <input type="text" name="upi" placeholder="Enter your UPI ID" required>
+        <button type="submit" {% if available_points < 10 %}disabled{% endif %}>Submit Withdrawal Request</button>
+    </form>
+    {% if available_points < 10 %}
+        <p class="remark">Note: Withdrawal is disabled as available points ({{ available_points }}) are below the minimum threshold of 10.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
+
+{% endblock %}

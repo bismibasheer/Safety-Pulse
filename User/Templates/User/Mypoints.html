@@ -1,0 +1,75 @@
+{% extends 'User/Header.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Points History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 50px auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #178581;
+            color: white;
+        }
+        .balance {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 20px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="mainContent">
+    <h2 style="text-align: center; margin-top: 30px;">Points History</h2>
+
+    <table>
+        <tr>
+            <th>Sl. No</th>
+            <th>Credited Points</th>
+            <th>Withdrawn Points</th>
+            <th>Date</th>
+        </tr>
+
+        {% for item in points_history %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.point_credited|default:"-" }}</td>
+            <td>{{ item.point_widthdrawed|default:"-" }}</td>
+            <td>{{ item.point_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No points history available</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="balance">
+        Available Points: {{ available_points }}
+        <br><br>
+        <a href="{% url 'User:Withdrawpoints' %}" 
+           style="padding: 10px 20px; background-color: #178581; color: white; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 15px;">
+            Withdraw Points
+        </a>
+    </div>
+    
+</div>
+</body>
+</html>
+
+{% endblock content %}

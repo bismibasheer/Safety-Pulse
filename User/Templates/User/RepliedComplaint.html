@@ -1,0 +1,223 @@
+{% extends 'User/Header.html' %}
+{% load mathfilters %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reply Complaint</title>
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
+<div class="container">
+    <div class="page-header">
+        <h2><i class="fas fa-comments me-2"></i> Reply to Complaints</h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="complaint-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>MVD Name</th>
+                    <th>Contact</th>
+                    <th>Vehicle No.</th>
+                    <th>Complaint</th>
+                    <th>Proof</th>
+                    <th>Status</th>
+                    <th>Reply</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in complaint %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.MVD.mvd_name }}</td>
+                    <td>{{ i.MVD.mvd_contact }}</td>
+                    <td>{{ i.vehicle_number.vehicle_number }}</td>
+                    <td>
+                        <strong>{{ i.Category.category_name }}</strong><br>
+                        <small>{{ i.complaint_description|truncatechars:50 }}</small>
+                    </td>
+                    <td>
+                        {% if i.complaint_photo %}
+                            <a href="#" class="proof-link" data-bs-toggle="modal" data-bs-target="#proofModal{{ i.id }}">
+                                <i class="fas fa-file-image me-1"></i> View
+                            </a>
+
+                            <!-- Proof Modal -->
+                            <div class="modal fade" id="proofModal{{ i.id }}" tabindex="-1" aria-labelledby="proofModalLabel{{ i.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="proofModalLabel{{ i.id }}">Proof Image</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="{{ i.complaint_photo.url }}" alt="Proof Image" class="img-fluid" style="max-height: 500px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.reply_complaint == "" %}
+                            <span class="status-pending"><i class="fas fa-clock me-1"></i> Pending</span>
+                        {% else %}
+                            <span class="status-resolved"><i class="fas fa-check-circle me-1"></i> Replied</span> <a href="{% url 'User:track' i.id %}" class="status-resolved">Track</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.reply_complaint != "" %}
+                            <small>{{ i.reply_complaint }}</small>
+                        {% else %}
+                            <span class="text-muted">Not replied yet</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.complaint_status == 1 %}
+                        <span class="status-resolved"><i class="fas fa-check-circle me-1"></i> Replied</span>
+                        {% elif i.complaint_status == 2 %}
+                            {% if i.complaint_payment == 1 %}
+                                <span class="status-pending"><i class="fas fa-clock me-1"></i> Chellan Generated</span>
+                            {% elif i.complaint_payment == 2 %}
+                                <span class="status-resolved"><i class="fas fa-check-circle me-1"></i> Payment Completed You Recived {{ i.complaint_amount|mul:"0.2" }} of the amount </span>
+                            {% else %}
+                            <span class="status-resolved"> Amount Updated</span>
+                            {% endif %}
+                        {% elif i.complaint_status == 3 %}
+                        <span class="status-resolved"><i class="fas fa-check-circle me-1"></i> Request Forward to RTO</span>
+                        {% else %}
+                        <span class="status-pending"><i class="fas fa-clock me-1"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    :root {
+        --primary-color: #f39c12;
+        --secondary-color: #2980b9;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --success-color: #2ecc71;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: var(--dark-color);
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    .page-header h2 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .complaint-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        box-shadow: var(--box-shadow);
+        background-color: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .complaint-table th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .complaint-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .complaint-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .complaint-table tr:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+    }
+
+    .status-pending {
+        color: var(--warning-color);
+        font-weight: 600;
+    }
+
+    .status-resolved {
+        color: var(--success-color);
+        font-weight: 600;
+    }
+
+    .proof-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .proof-link:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    /* Modal Image */
+    .modal-body img {
+        max-width: 100%;
+        border-radius: var(--border-radius);
+    }
+
+    /* Responsive Table */
+    @media (max-width: 768px) {
+        .complaint-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .complaint-table th, 
+        .complaint-table td {
+            padding: 10px 8px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+{% endblock %}

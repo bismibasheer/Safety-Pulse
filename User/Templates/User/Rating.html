@@ -1,0 +1,743 @@
+{% extends 'User/Header.html' %}
+{% block content %}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Review & Rating</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border: none;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(2, 37, 40, 0.15);
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        .bg-warning {
+            background-color: #3ba098 !important;
+        }
+        .rating-box {
+            padding: 30px;
+        }
+        .average-rating {
+            font-size: 3rem;
+            color: #008080;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(7, 222, 255, 0.3);
+        }
+        .rating-breakdown {
+            padding: 20px;
+        }
+        .progress {
+            height: 8px;
+            margin-bottom: 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: visible;
+        }
+        .progress-bar {
+            background-color: #008080;
+            position: relative;
+            transition: width 1s ease-in-out;
+        }
+        .progress-bar:after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 10px;
+            height: 10px;
+            background-color: #008080;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(7, 255, 251, 0.5);
+        }
+        .progress-label-left {
+            float: left;
+            margin-right: 0.5em;
+            line-height: 1em;
+            color: #a0e3e2;
+        }
+        .progress-label-right {
+            float: right;
+            margin-left: 0.3em;
+            line-height: 1em;
+            color: #a0e3e2;
+        }
+        .star-light {
+            color: #e9ecef;
+        }
+        .text-warning {
+            color: #008080 !important;
+        }
+        .review-card {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+        }
+        .review-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+        .review-card .card-header {
+            background-color: #f8f9fa;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .review-card .card-body {
+            padding: 15px;
+        }
+        .btn-primary {
+            background-color: #008080;
+            border-color: #008080;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(7, 255, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #008080;
+            border-color: #008080;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(7, 230, 255, 0.4);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(7, 222, 255, 0.3);
+        }
+        .btn-secondary {
+            background-color: #008080; /* Changed to match btn-primary */
+            border-color: #008080; /* Changed to match btn-primary */
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(7, 230, 255, 0.3); /* Changed to match btn-primary */
+            color: #f1ebeb; /* Ensure text is readable against yellow background */
+            text-decoration: none;
+        }
+        .btn-secondary:hover {
+            background-color: #008080; /* Changed to match btn-primary hover */
+            border-color: #008080; /* Changed to match btn-primary hover */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(7, 247, 255, 0.4); /* Changed to match btn-primary hover */
+            color: #66d4dc; /* Ensure text remains readable */
+        }
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(7, 247, 255, 0.3); /* Changed to match btn-primary active */
+        }
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 10px 30px rgba(209, 206, 206, 0.2);
+        }
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            position: relative;
+            background: linear-gradient(135deg, #008080 0%, #02515c 100%);
+            color: white;
+        }
+        .modal-header .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 1.8rem;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            color: rgb(249, 246, 246);
+            opacity: 0.8;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .modal-header .close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .submit_star {
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 0 2px 5px rgba(123, 233, 241, 0.1);
+        }
+        .submit_star:hover {
+            transform: scale(1.2);
+            text-shadow: 0 3px 10px rgba(7, 255, 243, 0.5);
+        }
+        #user_review {
+            min-height: 120px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        #user_review:focus {
+            border-color: #008080;
+            box-shadow: 0 0 0 0.2rem rgba(7, 255, 251, 0.25);
+        }
+        .write-review-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+            background: rgba(28, 206, 206, 0.05);
+            border-radius: 10px;
+            border: 1px dashed rgba(7, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .write-review-section:hover {
+            background: rgba(49, 213, 210, 0.26);
+            border-color: rgba(7, 255, 251, 0.5);
+        }
+        .total-review-count {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        .rating-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #008080;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .review-date {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        .no-reviews {
+            padding: 40px;
+            text-align: center;
+            color: #6c757d;
+            animation: pulse 2s infinite;
+        }
+        .pulse-icon {
+            font-size: 3rem;
+            color: #008080;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Keyframe animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        
+        /* Stagger animations for review cards */
+        .review-card:nth-child(1) { animation-delay: 0.1s; }
+        .review-card:nth-child(2) { animation-delay: 0.2s; }
+        .review-card:nth-child(3) { animation-delay: 0.3s; }
+        .review-card:nth-child(4) { animation-delay: 0.4s; }
+        .review-card:nth-child(5) { animation-delay: 0.5s; }
+        .review-card:nth-child(n+6) { animation-delay: 0.6s; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .average-rating {
+                font-size: 2.5rem;
+            }
+            .submit_star {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body onload="starrating()">
+    <div class="container animate__animated animate__fadeIn">
+        <div class="card">
+            <div class="card-header">
+                Ratings & Reviews
+                <a href="{% url 'User:feedback' %}" class="btn btn-secondary animate__animated animate__pulse animate__infinite animate__slower">
+                    <i class="fas fa-comment-dots"></i>  <small>Help us improve!</small>
+                  </a>
+                  
+                  
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4 text-center">
+                        <div class="average-rating mb-2 animate__animated animate__bounceIn">
+                            {% if avg %}
+                            <span id="average_rating">{{avg}}</span><small>/5</small>
+                            {% else %}
+                            <span id="average_rating">0</span><small>/5</small>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3 animate__animated animate__fadeIn">
+                            {% if avg == 1 %}
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            {% elif avg == 2 %}
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            {% elif avg == 3 %}
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            {% elif avg == 4 %}
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star star-light mr-1 main_star"></i>
+                            {% elif avg == 5 %}
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            {% endif %}
+                        </div>
+                        <div class="total-review-count animate__animated animate__fadeIn">
+                            Based on <span id="total_review">{{count}}</span> reviews
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="rating-summary animate__animated animate__fadeIn">
+                            <p>
+                                <div class="progress-label-left"><b>5</b> <i class="fas fa-star text-warning"></i></div>
+                                <div class="progress-label-right">(<span id="total_five_star_review">0</span>)</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                        aria-valuemax="100" id="five_star_progress"></div>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="progress-label-left"><b>4</b> <i class="fas fa-star text-warning"></i></div>
+                                <div class="progress-label-right">(<span id="total_four_star_review">0</span>)</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                        aria-valuemax="100" id="four_star_progress"></div>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="progress-label-left"><b>3</b> <i class="fas fa-star text-warning"></i></div>
+                                <div class="progress-label-right">(<span id="total_three_star_review">0</span>)</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                        aria-valuemax="100" id="three_star_progress"></div>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="progress-label-left"><b>2</b> <i class="fas fa-star text-warning"></i></div>
+                                <div class="progress-label-right">(<span id="total_two_star_review">0</span>)</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                        aria-valuemax="100" id="two_star_progress"></div>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="progress-label-left"><b>1</b> <i class="fas fa-star text-warning"></i></div>
+                                <div class="progress-label-right">(<span id="total_one_star_review">0</span>)</div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                        aria-valuemax="100" id="one_star_progress"></div>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="write-review-section animate__animated animate__fadeIn">
+                            <h4 class="mb-4">Share Your Experience</h4>
+                            <button type="button" name="add_review" id="add_review" class="btn btn-primary animate__animated animate__pulse animate__infinite animate__slower">
+                                Write a Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h4 class="mb-4 animate__animated animate__fadeIn">Customer Reviews</h4>
+        <div id="review_content">
+            {% if data %}
+            {% for i in data %}
+            <div class="card review-card">
+                <div class="card-header">
+                    <div class="review-header">
+                        <div class="user-avatar">{{i.user.user_name|first|upper}}</div>
+                        <div>
+                            <div>{{i.user.user_name}}</div>
+                            <div class="review-date">{{i.datetime}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 mb-2">
+                            {% for j in ar %}
+                                {% if j <= i.rating_data %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="fas fa-star star-light"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-12 mt-2">
+                            <p>{{i.user_review}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="no-reviews animate__animated animate__fadeIn">
+                <div class="pulse-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>No reviews yet. Be the first to review!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content animate__animated animate__zoomIn">
+                <div class="modal-header">
+                    <h5 class="modal-title">Submit Your Review</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#review_modal').modal('hide')">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <h4>How would you rate ?</h4>
+                        <div class="mb-3">
+                            <i class="fas fa-star submit_star mr-2" id="submit_star_1" data-rating="1"></i>
+                            <i class="fas fa-star submit_star mr-2" id="submit_star_2" data-rating="2"></i>
+                            <i class="fas fa-star submit_star mr-2" id="submit_star_3" data-rating="3"></i>
+                            <i class="fas fa-star submit_star mr-2" id="submit_star_4" data-rating="4"></i>
+                            <i class="fas fa-star submit_star mr-2" id="submit_star_5" data-rating="5"></i>
+                        </div>
+                    </div>
+                    <input type="hidden" name="txt_lid" id="txt_lid" value="{{mid}}" />
+                    <div class="form-group">
+                        <label for="user_review">Your Review</label>
+                        <textarea name="user_review" id="user_review" class="form-control"
+                            placeholder="Share details of your experience ..."></textarea>
+                    </div>
+                    <div class="form-group text-center mt-4">
+                        <button type="button" class="btn btn-primary px-4" id="save_review">Submit Review</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize modal properly
+            $('#review_modal').modal({
+                show: false,
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            var rating_data = 0;
+
+            $('#add_review').click(function () {
+                $('#review_modal').modal('show');
+                // Reset stars and review when modal opens
+                reset_background();
+                $('#user_review').val('');
+                rating_data = 0;
+            });
+
+            // Close button handler
+            $('.modal-header .close').click(function() {
+                $('#review_modal').modal('hide');
+            });
+
+            $(document).on('mouseenter', '.submit_star', function () {
+                var rating = $(this).data('rating');
+                reset_background();
+                for (var count = 1; count <= rating; count++) {
+                    $('#submit_star_' + count).addClass('text-warning');
+                    $('#submit_star_' + count).removeClass('star-light');
+                    $('#submit_star_' + count).addClass('animate__animated animate__bounceIn');
+                    setTimeout(function() {
+                        $('#submit_star_' + count).removeClass('animate__animated animate__bounceIn');
+                    }, 1000);
+                }
+            });
+
+            function reset_background() {
+                if(rating_data == 0) {
+                    for (var count = 1; count <= 5; count++) {
+                        $('#submit_star_' + count).addClass('star-light');
+                        $('#submit_star_' + count).removeClass('text-warning');
+                    }
+                } else {
+                    for (var count = 1; count <= 5; count++) {
+                        if(count <= rating_data) {
+                            $('#submit_star_' + count).removeClass('star-light');
+                            $('#submit_star_' + count).addClass('text-warning');
+                        } else {
+                            $('#submit_star_' + count).addClass('star-light');
+                            $('#submit_star_' + count).removeClass('text-warning');
+                        }
+                    }
+                }
+            }
+
+            $(document).on('mouseleave', '.submit_star', function () {
+                reset_background();
+            });
+
+            $(document).on('click', '.submit_star', function () {
+                rating_data = $(this).data('rating');
+                // Add animation to selected stars
+                for (var count = 1; count <= rating_data; count++) {
+                    $('#submit_star_' + count).addClass('animate__animated animate__rubberBand');
+                    setTimeout(function() {
+                        $('#submit_star_' + count).removeClass('animate__animated animate__rubberBand');
+                    }, 1000);
+                }
+            });
+
+            $('#save_review').click(function () {
+                var user_name = $('#user_name').val() || 'Anonymous'; // Default to 'Anonymous' if user_name field doesn't exist
+                var user_review = $('#user_review').val().trim();
+                var product_id = $('#txt_lid').val();
+
+                // Check if both rating and review are empty
+                if (rating_data == 0 && user_review == '') {
+                    $('#user_review').addClass('animate__animated animate__shakeX');
+                    $('.submit_star').addClass('animate__animated animate__shakeX');
+                    setTimeout(function() {
+                        $('#user_review').removeClass('animate__animated animate__shakeX');
+                        $('.submit_star').removeClass('animate__animated animate__shakeX');
+                    }, 1000);
+                    return false;
+                }
+
+                // Allow submission if either rating or review is provided
+                $('#save_review').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+                $('#save_review').prop('disabled', true);
+
+                $.ajax({
+                    url: "{% url 'User:ajaxstar' %}",
+                    data: { 
+                        rating_data: rating_data || 0, // Send 0 if no rating is selected
+                        user_name: user_name,
+                        user_review: user_review || '', // Send empty string if no review is provided
+                        pid: product_id 
+                    },
+                    success: function (data) {
+                        // Show success animation
+                        $('#review_modal .modal-body').html(
+                            '<div class="text-center py-4 animate__animated animate__fadeIn">' +
+                            '<i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>' +
+                            '<h4>Thank You!</h4>' +
+                            '<p>Your review has been submitted successfully.</p>' +
+                            '</div>'
+                        );
+                        
+                        setTimeout(function() {
+                            $('#review_modal').modal('hide');
+                            window.location.reload();
+                        }, 1500);
+                    },
+                    error: function() {
+                        $('#save_review').html('Submit Review');
+                        $('#save_review').prop('disabled', false);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+
+        function starrating() {
+            var pdt = document.getElementById("txt_lid").value
+            var ur = "{% url 'User:starrating' %}"
+            $.ajax({
+                url: ur,
+                data: { pdt: pdt, },
+                success: function (data) {
+                    console.log(data);
+
+                    // Animate the numbers counting up
+                    animateValue('total_five_star_review', 0, data.five, 1000);
+                    animateValue('total_four_star_review', 0, data.four, 1000);
+                    animateValue('total_three_star_review', 0, data.three, 1000);
+                    animateValue('total_two_star_review', 0, data.two, 1000);
+                    animateValue('total_one_star_review', 0, data.one, 1000);
+
+                    // Animate progress bars
+                    $('.progress-bar').each(function() {
+                        var targetWidth = 0;
+                        var id = $(this).attr('id');
+                        
+                        if(id == 'five_star_progress' && data.total_review > 0) {
+                            targetWidth = (data.five / data.total_review) * 100;
+                        } else if(id == 'four_star_progress' && data.total_review > 0) {
+                            targetWidth = (data.four / data.total_review) * 100;
+                        } else if(id == 'three_star_progress' && data.total_review > 0) {
+                            targetWidth = (data.three / data.total_review) * 100;
+                        } else if(id == 'two_star_progress' && data.total_review > 0) {
+                            targetWidth = (data.two / data.total_review) * 100;
+                        } else if(id == 'one_star_progress' && data.total_review > 0) {
+                            targetWidth = (data.one / data.total_review) * 100;
+                        }
+                        
+                        $(this).css('width', targetWidth + '%');
+                    });
+
+                    if(data.total_review > 0) {
+                        var html = '';
+                        for(var count = 0; count < data.total_review; count++) {
+                            html += '<div class="card review-card" style="animation-delay: '+(count*0.1)+'s">';
+                            html += '<div class="card-header">';
+                            html += '<div class="review-header">';
+                            html += '<div class="user-avatar">'+data.review_data[count].user_name.charAt(0).toUpperCase()+'</div>';
+                            html += '<div>';
+                            html += '<div>'+data.review_data[count].user_name+'</div>';
+                            html += '<div class="review-date">'+data.review_data[count].datetime+'</div>';
+                            html += '</div></div></div>';
+                            html += '<div class="card-body">';
+                            html += '<div class="row"><div class="col-sm-6 mb-2">';
+                            
+                            for(var star = 1; star <= 5; star++) {
+                                var class_name = '';
+                                if(data.review_data[count].rating >= star) {
+                                    class_name = 'text-warning';
+                                } else {
+                                    class_name = 'star-light';
+                                }
+                                html += '<i class="fas fa-star '+class_name+' mr-1"></i>';
+                            }
+                            
+                            html += '</div><div class="col-sm-12 mt-2">';
+                            html += '<p>'+data.review_data[count].user_review+'</p>';
+                            html += '</div></div></div></div>';
+                        }
+                        $('#review_content').html(html);
+                    }
+                }
+            });
+        }
+        
+        function animateValue(id, start, end, duration) {
+            var obj = document.getElementById(id);
+            var range = end - start;
+            var minTimer = 50;
+            var stepTime = Math.abs(Math.floor(duration / range));
+            
+            stepTime = Math.max(stepTime, minTimer);
+            
+            var startTime = new Date().getTime();
+            var endTime = startTime + duration;
+            var timer;
+            
+            function run() {
+                var now = new Date().getTime();
+                var remaining = Math.max((endTime - now) / duration, 0);
+                var value = Math.round(end - (remaining * range));
+                obj.innerHTML = value;
+                if (value == end) {
+                    clearInterval(timer);
+                }
+            }
+            
+            timer = setInterval(run, stepTime);
+            run();
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
