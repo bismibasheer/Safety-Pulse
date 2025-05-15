@@ -1,0 +1,303 @@
+{% extends 'Subadmin/Head.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Chart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d9488;           /* Teal color */
+            --primary-light: #14b8a6;     /* Lighter teal */
+            --primary-dark: #0f766e;      /* Darker teal */
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin: 0;
+            /* padding: 20px; */
+            animation: fadeInBody 0.8s ease-out;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInHeader 1s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            animation: shine 8s infinite linear;
+        }
+
+        .chart-card {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            text-align: center;
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: scale(1.01);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Search Bar Styles */
+        .search-container {
+            max-width: 400px;
+            margin: 1.5rem auto;
+            position: relative;
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: white;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1.2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInHeader {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRow {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-10%, -10%); }
+            100% { transform: rotate(30deg) translate(10%, 10%); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .chart-card {
+                padding: 1rem;
+                margin: 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header h2 {
+                font-size: 1.4rem; /* Slightly smaller for mobile */
+            }
+
+            .search-container {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2><i class="fas fa-chart-bar"></i> Status Overview</h2>
+        </div>
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by category (MVD, RTO, User)" oninput="filterChart()">
+        </div>
+        <div class="chart-card">
+            <canvas id="groupedbar"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const groupeddata = {{ datalist | safe }};
+        const originalLabels = ['MVD', 'RTO', 'User'];
+        const originalDatasets = [
+            {
+                label: 'Total',
+                data: [groupeddata[0].values, groupeddata[3].values, groupeddata[6].values],
+                backgroundColor: 'rgba(13, 148, 136, 0.8)', /* Match --primary */
+                borderRadius: 8,
+            },
+            {
+                label: 'Verified',
+                data: [groupeddata[1].values, groupeddata[4].values, groupeddata[7].values],
+                backgroundColor: 'rgba(16, 185, 129, 0.8)', /* Match --success */
+                borderRadius: 8,
+            },
+            {
+                label: 'Rejected',
+                data: [groupeddata[2].values, groupeddata[5].values, groupeddata[8].values],
+                backgroundColor: 'rgba(239, 68, 68, 0.8)', /* Match --danger */
+                borderRadius: 8,
+            }
+        ];
+
+        const ctxx = document.getElementById('groupedbar').getContext('2d');
+        const chart = new Chart(ctxx, {
+            type: 'bar',
+            data: {
+                labels: originalLabels,
+                datasets: originalDatasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            color: 'var(--gray-700)'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Status Overview: MVD, RTO & Users',
+                        font: {
+                            size: 20,
+                            weight: 'bold'
+                        },
+                        color: 'var(--gray-700)'
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'var(--gray-200)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 13
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        function filterChart() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const filteredLabels = originalLabels.filter(label => label.toLowerCase().includes(searchValue));
+            const filteredData = originalDatasets.map(dataset => {
+                return {
+                    ...dataset,
+                    data: originalLabels
+                        .map((label, index) => filteredLabels.includes(label) ? dataset.data[index] : null)
+                        .filter(val => val !== null)
+                };
+            });
+
+            chart.data.labels = filteredLabels.length > 0 ? filteredLabels : originalLabels;
+            chart.data.datasets = filteredData.length > 0 ? filteredData : originalDatasets;
+            chart.update();
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}
