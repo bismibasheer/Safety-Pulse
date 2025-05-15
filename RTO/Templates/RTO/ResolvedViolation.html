@@ -1,0 +1,293 @@
+{% extends 'RTO/Header.html' %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolved Complaint</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #BBB7A8;
+        }
+
+        .page-title {
+            text-align: center;
+            background-color: transparent;
+            color: #BBB7A8;
+            padding: 30px 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .page-title i {
+            margin-right: 15px;
+        }
+
+        .card-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .vehicle-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            text-align: center;
+            background-color: transparent;
+            padding: 25px;
+            color: #000;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.4em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+        }
+
+        .card-header h3 i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .card-header p {
+            margin: 10px 0 0;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .card-header p i {
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+
+        .violations-list {
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .violation-item {
+            padding: 18px;
+            margin-bottom: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .violation-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .violation-number {
+            font-weight: 700;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .violation-number i {
+            margin-right: 5px;
+        }
+
+        .violation-title {
+            color: #BBB7A8;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin: 12px 0 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .violation-title i {
+            margin-right: 8px;
+            font-size: 1em;
+        }
+
+        .violation-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .violation-proof a {
+            display: inline-flex;
+            align-items: center;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            border: 1px solid #3498db;
+            font-size: 0.9em;
+        }
+
+        .violation-proof a:hover {
+            background: #3498db;
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .violation-proof a i {
+            margin-right: 6px;
+            font-size: 0.9em;
+        }
+
+        .no-violations {
+            text-align: center;
+            color: #95a5a6;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .no-violations i {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: block;
+            color: #BBB7A8;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        .image-modal .modal-content {
+            max-width: 90%;
+            max-height: 80%;
+            margin: auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #bbb;
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2em;
+                padding: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <form action="" method="post">
+        <h2 class="page-title"><i class="fas fa-check-circle"></i>Resolved Complaints</h2>
+        <div class="card-container">
+            {% for i in req %}
+            <div class="vehicle-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user"></i> User: {{ i.Vehicle.vehicleuser_name }}</h3>
+                    <p><i class="fas fa-car"></i> Vehicle Number: {{ i.Vehicle.vehicle_number }}</p>
+                </div>
+
+                <div class="violations-list">
+                    {% for violation in i.Vehicle.tbl_complaint_set.all %}
+                    <div class="violation-item">
+                        <span class="violation-number"><i class="fas fa-exclamation-triangle"></i>Violation #{{ forloop.counter }}</span>
+                        <div class="violation-title"><i class="fas fa-tag"></i>{{ violation.Category.category_name }}</div>
+                        <div class="violation-desc">{{ violation.complaint_description }}</div>
+                        <div class="violation-proof">
+                            <a href="javascript:void(0);" onclick="openModal('{{ violation.complaint_photo.url }}')">
+                                <i class="fas fa-image"></i>View Proof
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="no-violations">
+                        <i class="fas fa-check"></i>
+                        <span>No violations recorded</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+
+    <script>
+        function openModal(imageUrl) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImage");
+            modal.style.display = "block";
+            modalImg.src = imageUrl;
+        }
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}
