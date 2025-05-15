@@ -1,0 +1,15 @@
+<table border="2" align="center">
+
+    <tr>
+        <th>#</th>
+        <th>User Name</th>
+        <th>Vehicle Number</th>
+    </tr>
+    {% for i in data %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{i.vehicleuser_name}}</td>
+        <td>{{i.vehicle_number}}</td>
+    </tr>
+    {% endfor %}
+</table>

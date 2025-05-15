@@ -1,0 +1,262 @@
+{% extends 'MVD/Header.html' %}
+{% block content %}
+
+<!-- Add Font Awesome CSS in head -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #dc3545;
+    }
+
+    .profile-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .profile-header h2 i {
+        font-size: 1.8rem;
+    }
+
+    .profile-section {
+        max-width: 750px;
+        margin: 30px auto 50px;
+        background: linear-gradient(145deg, #ffffff, #f0f4f8);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        animation: floatIn 0.7s ease-in-out;
+    }
+
+    .profile-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+    }
+
+    .profile-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 12px;
+        border: 3px solid #dc3545;
+        transition: all 0.4s ease;
+    }
+
+    .profile-photo:hover {
+        transform: rotate(5deg) scale(1.03);
+        border-color: #b02a37;
+        box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+    }
+
+    .profile-table th {
+        background: #dc3545;
+        color: white;
+        padding: 14px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .profile-table th i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .profile-table td {
+        padding: 14px 20px;
+        color: #444;
+        background: #fff;
+        border-bottom: 1px solid #e0e4e8;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .profile-table tr:hover td {
+        background: #f8d7da;
+        transform: translateX(5px);
+    }
+
+    .action-panel {
+        padding-top: 25px;
+        text-align: center;
+    }
+
+    .action-panel a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 30px;
+        margin: 0 10px;
+        background: #dc3545;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .action-panel a:hover {
+        background: #b02a37;
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    @keyframes floatIn {
+        0% {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .profile-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .profile-section {
+            margin: 20px 10px;
+            padding: 20px;
+        }
+
+        .profile-table th, .profile-table td {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .profile-photo {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .action-panel a {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+    }
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-header h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+        color: #dc3545; /* Matching your red theme */
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    }
+
+    .profile-header h2 i {
+        font-size: 1.8rem;
+        color: #dc3545; /* Matching icon color */
+    }
+
+    .profile-section {
+        max-width: 750px;
+        margin: 30px auto 50px;
+        background: linear-gradient(145deg, #ffffff, #f0f4f8);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        animation: floatIn 0.7s ease-in-out;
+    }
+
+    /* Rest of your existing styles... */
+    .profile-table th {
+        background: #dc3545;
+        color: white;
+        padding: 14px 20px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .action-panel a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 30px;
+        margin: 0 10px;
+        background: #dc3545;
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="profile-section">
+    <div class="profile-header">
+        <h2><i class="fas fa-id-card"></i> My Profile</h2>
+    </div>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="profile-table">
+            <tr>
+                <th><i class="fas fa-camera-retro"></i> Photo</th>
+                <td colspan="2" style="text-align: center;">
+                    <img src="{{MVD.mvd_photo.url}}" alt="photo" class="profile-photo">
+                </td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-signature"></i> Name</th>
+                <td>{{MVD.mvd_name}}</td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-at"></i> Email</th>
+                <td>{{MVD.mvd_email}}</td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-mobile-alt"></i> Contact</th>
+                <td>{{MVD.mvd_contact}}</td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-home"></i> Address</th>
+                <td>{{MVD.mvd_address}}</td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-map-marked-alt"></i> District</th>
+                <td>{{MVD.place.district.district_name}}</td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-map-pin"></i> Place</th>
+                <td>{{MVD.place.place_name}}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="action-panel">
+                    <a href="{% url 'MVD:Editprofile' %}"><i class="fas fa-user-edit"></i> Edit Profile</a>
+                    <a href="{% url 'MVD:Changepassword' %}"><i class="fas fa-lock"></i> Change Password</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+{% if msg %}
+<script>
+    alert('{{ msg }}');
+    window.location = "{% url 'MVD:Myprofile' %}";
+</script>
+{% endif %}
+
+{% endblock %}

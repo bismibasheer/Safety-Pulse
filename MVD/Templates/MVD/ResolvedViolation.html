@@ -1,0 +1,492 @@
+{% extends 'MVD/Header.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolved Complaint Dashboard - MVD Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            /* Color palette */
+            --primary-white: #ffffff;
+            --primary-red: #c62828;
+            --secondary-red: #ef5350;
+            --text-dark: #212121;
+            --text-muted: #757575;
+            --card-bg: #fafafa;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+            --transition: all 0.25s ease;
+        }
+
+        /* Base styles */
+        body {
+            font-family: 'Open Sans', 'Arial', sans-serif;
+            background: linear-gradient(to bottom, var(--primary-white), var(--card-bg));
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Font Awesome icons */
+        .fas {
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            -webkit-font-smoothing: antialiased;
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+        }
+
+        /* Page header */
+        .page-title {
+            text-align: center;
+            padding: 1.5rem 0;
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+            font-weight: 700;
+            color: var(--primary-red);
+            background: var(--primary-white);
+            border-bottom: 2px solid var(--secondary-red);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .page-title::before {
+            content: '\f15c'; /* File-alt for complaints */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--primary-red);
+        }
+
+        /* Card container */
+        .card-container {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            padding: 0 1rem;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* Vehicle card */
+        .vehicle-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--secondary-red);
+        }
+
+        /* Card header */
+        .card-header {
+            background: var(--primary-white);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card-header h3::before {
+            content: '\f007'; /* User icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 1rem;
+            color: var(--primary-red);
+        }
+
+        .card-header p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card-header p::before {
+            content: '\f1b9'; /* Car icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: var(--primary-red);
+        }
+
+        /* Violations list */
+        .violations-list {
+            padding: 1rem;
+            background: var(--card-bg);
+        }
+
+        .violation-item {
+            padding: 0.75rem;
+            border-left: 3px solid var(--primary-red);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            background: var(--primary-white);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .violation-item:hover {
+            background: var(--card-bg);
+            transform: translateX(4px);
+        }
+
+        .violation-number {
+            font-weight: 600;
+            color: var(--primary-white);
+            background: var(--primary-red);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .violation-number::before {
+            content: '\f0a1'; /* Exclamation-circle for alert */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        .violation-title {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0.4rem 0;
+            text-transform: capitalize;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .violation-title::before {
+            content: '\f071'; /* Warning icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.9rem;
+            color: var(--primary-red);
+        }
+
+        .violation-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .violation-proof a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--primary-red);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            border: 1px solid var(--primary-red);
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .violation-proof a:hover {
+            background: var(--primary-red);
+            color: var(--primary-white);
+            border-color: transparent;
+        }
+
+        .violation-proof a::before {
+            content: '\f03e'; /* Image for proof */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        /* Payment status */
+        .payment-status {
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .payment-suc {
+            color: #2e7d32;
+            background: rgba(46, 125, 50, 0.1);
+        }
+
+        .payment-suc::before {
+            content: '\f00c'; /* Check icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        .payment-ped {
+            color: var(--primary-red);
+            background: rgba(198, 40, 40, 0.1);
+        }
+
+        .payment-ped::before {
+            content: '\f071'; /* Warning icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        /* Back button */
+        .back-btn {
+            display: block;
+            width: fit-content;
+            margin: 1.5rem auto;
+            padding: 0.5rem 1rem;
+            background: var(--primary-red);
+            color: var(--primary-white);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .back-btn::before {
+            content: '\f30a'; /* Arrow-left for back */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 0.8rem;
+        }
+
+        .back-btn:hover {
+            background: var(--secondary-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            background: var(--primary-white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: var(--primary-red);
+            background: var(--primary-white);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background: var(--secondary-red);
+            color: var(--primary-white);
+        }
+
+        .close-btn::before {
+            content: '\f00d'; /* Cross icon for close */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr;
+                padding: 0 0.5rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .back-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .card-header {
+                padding: 0.75rem;
+            }
+
+            .modal-content {
+                max-width: 95%;
+            }
+
+            .violation-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Accessibility */
+        a:focus, .back-btn:focus, .close-btn:focus, .vehicle-card:focus-within {
+            outline: 2px solid var(--secondary-red);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="page-title">Resolved Complaints Dashboard</h2>
+    <div class="card-container">
+        {% for i in req %}
+        <div class="vehicle-card" tabindex="0" aria-label="Vehicle complaint card for {{ i.Vehicle.vehicleuser_name }}">
+            <div class="card-header">
+                <h3>User: {{ i.Vehicle.vehicleuser_name }}</h3>
+                <p>Vehicle Number: {{ i.Vehicle.vehicle_number }}</p>
+            </div>
+            <div class="violations-list">
+                {% for violation in i.Vehicle.tbl_complaint_set.all %}
+                <div class="violation-item">
+                    <span class="violation-number">Violation #{{ forloop.counter }}</span>
+                    <span class="violation-title">{{ violation.Category.category_name }}</span>
+                    <span class="violation-desc">{{ violation.complaint_description }}</span>
+                    <span class="violation-proof">
+                        <a href="#" onclick="openModal('{{ violation.complaint_photo.url }}')" aria-label="View proof for violation {{ forloop.counter }}">View Proof</a>
+                    </span>
+                    <span class="payment-status {% if violation.complaint_payment == 1 %}payment-suc{% else %}payment-ped{% endif %}">
+                        {% if violation.complaint_payment == 1 %}
+                        Payment Completed
+                        {% else %}
+                        Payment Pending
+                        {% endif %}
+                    </span>
+                </div>
+                {% empty %}
+                <div class="violation-item">
+                    <span>No violations recorded</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+ 
+
+    <!-- Modal for proof images -->
+    <div class="modal" id="proofModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()" aria-label="Close proof image modal"></button>
+            <img id="proofImage" src="" alt="Proof Image">
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageUrl) {
+            const modal = document.getElementById('proofModal');
+            const proofImage = document.getElementById('proofImage');
+            proofImage.src = imageUrl;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('proofModal');
+            modal.classList.remove('active');
+            document.getElementById('proofImage').src = '';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('proofModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

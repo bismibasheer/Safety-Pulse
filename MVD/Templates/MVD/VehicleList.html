@@ -1,0 +1,330 @@
+{% extends 'MVD/Header.html' %}
+{% block title %}Vehicle Details{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<div class="containers">
+    <h1 class="page-heading">
+        <i class="fas fa-car-side"></i> Vehicle Details
+    </h1>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <div class="search-container">
+            <tr>
+                <td><label for="txt_search">Search:</label></td>
+                <td><input type="text" name="txt_search" id="txt_search" onkeyup="Search()" placeholder="Enter vehicle number"></td>
+            </tr>
+        </div>
+        <br><br><br>
+        <table class="vehicle-table" id="result" align="center">
+            <tr>
+                <th>#</th>
+                <th>Owner Name</th>
+                <th>Vehicle Number</th>
+               
+            </tr>
+            {% for i in vehicle %}
+            <tr style="--row-index: {{ forloop.counter0 }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.vehicleuser_name }}</td>
+                <td>{{ i.vehicle_number }}</td>
+                
+                
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="no-results"><i class="fas fa-exclamation-circle"></i> No results found.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function Search() {
+        var name = document.getElementById("txt_search").value;
+        var ur = "{% url 'MVD:ajaxsearchnumber' %}";
+        $.ajax({
+            url: ur,
+            data: { name: name },
+            success: function (data) {
+                $("#result").html(data);
+                $("#result tr:not(:first-child)").each(function(index) {
+                    $(this).css("--row-index", index);
+                });
+                if (data.trim() === "") {
+                    $("#result").html('<tr><th>#</th><th>User Name</th><th>Vehicle Number</th></tr><tr><td colspan="3" class="no-results"><i class="fas fa-exclamation-circle"></i> No results found.</td></tr>');
+                }
+            },
+            error: function () {
+                $("#result").html('<tr><th>#</th><th>User Name</th><th>Vehicle Number</th></tr><tr><td colspan="3" class="no-results"><i class="fas fa-exclamation-triangle"></i> Error fetching data. Please try again.</td></tr>');
+            }
+        });
+    }
+
+    // Add shake animation on empty search with Enter key
+    document.getElementById("txt_search").addEventListener("keyup", function(event) {
+        if (event.key === "Enter" && !this.value) {
+            $(this).css("border-color", "var(--primary-color)");
+            $(this).animate({ marginLeft: "-10px" }, 100)
+                .animate({ marginLeft: "10px" }, 100)
+                .animate({ marginLeft: "-10px" }, 100)
+                .animate({ marginLeft: "0" }, 100, function() {
+                    $(this).css("border-color", "var(--border-color)");
+                });
+        }
+    });
+
+    // Add focus animation
+    document.getElementById("txt_search").addEventListener("focus", function() {
+        $(this).animate({ scale: "1.02" }, 200).animate({ scale: "1" }, 200);
+    });
+</script>
+
+<style>
+    :root {
+        --primary-color: #dc3545;
+        --primary-hover: #c82333;
+        --secondary-color: #6c757d;
+        --light-bg: #f8f9fa;
+        --border-color: #e0e0e0;
+        --text-color: #495057;
+        --text-light: #6c757d;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .containers {
+        width: 90%;
+        max-width: 1000px;
+        margin: 30px auto;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        animation: floatIn 1s ease-out both;
+        text-align: center;
+    }
+
+    @keyframes floatIn {
+        0% {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .page-heading {
+        color: var(--primary-color);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        animation: bounceIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .page-heading i {
+        font-size: 1.8rem;
+        animation: rotateIn 1s ease infinite;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes rotateIn {
+        0% { transform: rotate(0deg); }
+        50% { transform: rotate(15deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    .search-container {
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out both;
+    }
+
+    @keyframes fadeInUp {
+        0% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .search-container tr {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .search-container td {
+        display: flex;
+        align-items: center;
+    }
+
+    .search-container label {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        margin-right: 10px;
+    }
+
+    .search-container input {
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 1rem;
+        outline: none;
+        width: 300px;
+        max-width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .search-container input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(220, 53, 69, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .vehicle-table {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .vehicle-table th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        animation: slideInLeft 0.5s ease-out both;
+    }
+
+    .vehicle-table td {
+        padding: 12px;
+        background-color: var(--light-bg);
+        border-radius: 6px;
+        text-align: center;
+        vertical-align: middle;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .vehicle-table tr {
+        animation: flipInX 0.7s ease-out both;
+        animation-delay: calc(var(--row-index) * 0.1s);
+    }
+
+    @keyframes flipInX {
+        0% {
+            opacity: 0;
+            transform: rotateX(90deg);
+        }
+        100% {
+            opacity: 1;
+            transform: rotateX(0deg);
+        }
+    }
+
+    .vehicle-table tr:hover td {
+        background-color: #f8d7da;
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 20px;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .no-results i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .containers {
+            width: 95%;
+            padding: 20px;
+        }
+
+        .page-heading {
+            font-size: 1.6rem;
+        }
+
+        .search-container tr {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-container td {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .search-container input {
+            width: 100%;
+        }
+
+        .vehicle-table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .vehicle-table th,
+        .vehicle-table td {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .page-heading i {
+            font-size: 1.4rem;
+        }
+
+        .search-container label {
+            font-size: 1rem;
+        }
+    }
+</style>
+<br><br><br><br><br><br><br>
+{% endblock %}
