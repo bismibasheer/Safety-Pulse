@@ -1,0 +1,398 @@
+{% extends 'Administrator/Head.html' %}
+{% block content %}
+<div class="header">
+    <div class="header-content">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Status Overview
+        </h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Status Chart
+        </h2>
+        <div class="search-container">
+            <label for="chart-search">
+                <i class="fas fa-magnifying-glass"></i>
+            </label>
+            <input type="text" id="chart-search" class="search-input" placeholder="Search by category (MVD, RTO, User)..." oninput="searchChart()">
+        </div>
+        <canvas id="groupedbar"></canvas>
+    </div>
+</div>
+
+<style>
+    :root {
+        --purple-900: #4c1d95;
+        --purple-800: #5b21b6;
+        --purple-700: #6d28d9;
+        --purple-600: #7c3aed;
+        --purple-500: #a78bfa;
+        --purple-400: #a78bfa;
+        --purple-300: #c4b5fd;
+        --purple-200: #ddd6fe;
+        --purple-100: #ede9fe;
+        --purple-50: #f5f3ff;
+        --danger: #ef4444;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --gray-900: #111827;
+        --gray-800: #1f2937;
+        --gray-700: #374151;
+        --gray-600: #4b5563;
+        --gray-500: #6b7280;
+        --gray-400: #9ca3af;
+        --gray-300: #d1d5db;
+        --gray-200: #e5e7eb;
+        --gray-100: #f3f4f6;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--purple-50);
+        color: var(--gray-800);
+        line-height: 1.6;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .header {
+        background: linear-gradient(135deg, var(--purple-700), var(--purple-800));
+        color: white;
+        padding: 2rem;
+        border-radius: 0 0 1rem 1rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        transform: rotate(30deg);
+        animation: shine 8s infinite linear;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 svg {
+        width: 2rem;
+        height: 2rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-sm);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--purple-200);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideUp 0.5s ease-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--purple-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .card-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, var(--purple-500), var(--purple-700));
+        border-radius: 3px;
+    }
+
+    .card-title svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        stroke-width: 1.5;
+    }
+
+    .search-container {
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .search-container label {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--purple-600);
+        font-size: 1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid var(--purple-200);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        background-color: var(--purple-50);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--purple-400);
+        box-shadow: 0 0 0 3px var(--purple-100);
+        transform: translateY(-2px);
+    }
+
+    .search-input:hover {
+        border-color: var(--purple-300);
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+        animation: fadeIn 0.7s ease-out;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes shine {
+        0% { transform: rotate(30deg) translate(-10%, -10%); }
+        100% { transform: rotate(30deg) translate(10%, 10%); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+            animation: none;
+        }
+        
+        .header {
+            padding: 1.5rem 1rem;
+            border-radius: 0;
+        }
+        
+        .header::before {
+            animation: none;
+            display: none;
+        }
+        
+        .card {
+            padding: 1.5rem;
+            animation: none;
+        }
+        
+        .search-container {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const groupeddata = {{ datalist | safe }};
+    const originalLabels = ['MVD', 'RTO', 'User'];
+    const originalData = {
+        total: [groupeddata[0].values, groupeddata[3].values, groupeddata[6].values],
+        verified: [groupeddata[1].values, groupeddata[4].values, groupeddata[7].values],
+        rejected: [groupeddata[2].values, groupeddata[5].values, groupeddata[8].values]
+    };
+
+    const ctxx = document.getElementById('groupedbar').getContext('2d');
+    let chartInstance = new Chart(ctxx, {
+        type: 'bar',
+        data: {
+            labels: originalLabels,
+            datasets: [
+                {
+                    label: 'Total',
+                    data: originalData.total,
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)', /* --purple-600 */
+                    borderRadius: 8
+                },
+                {
+                    label: 'Verified',
+                    data: originalData.verified,
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)', /* --success */
+                    borderRadius: 8
+                },
+                {
+                    label: 'Rejected',
+                    data: originalData.rejected,
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)', /* --warning */
+                    borderRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            size: 14,
+                            family: 'Inter, system-ui, sans-serif'
+                        },
+                        color: 'var(--gray-800)'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Status Overview: MVD, RTO & Users',
+                    font: {
+                        size: 20,
+                        family: 'Inter, system-ui, sans-serif',
+                        weight: '600'
+                    },
+                    color: 'var(--gray-800)'
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 13,
+                            family: 'Inter, system-ui, sans-serif'
+                        },
+                        color: 'var(--gray-700)'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'var(--purple-100)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 13,
+                            family: 'Inter, system-ui, sans-serif'
+                        },
+                        color: 'var(--gray-700)'
+                    }
+                }
+            }
+        }
+    });
+
+    function searchChart() {
+        const input = document.getElementById('chart-search').value.toLowerCase();
+        const filteredLabels = originalLabels.filter(label => label.toLowerCase().includes(input));
+        const filteredData = {
+            total: [],
+            verified: [],
+            rejected: []
+        };
+
+        originalLabels.forEach((label, index) => {
+            if (label.toLowerCase().includes(input)) {
+                filteredData.total.push(originalData.total[index]);
+                filteredData.verified.push(originalData.verified[index]);
+                filteredData.rejected.push(originalData.rejected[index]);
+            }
+        });
+
+        chartInstance.data.labels = filteredLabels;
+        chartInstance.data.datasets[0].data = filteredData.total;
+        chartInstance.data.datasets[1].data = filteredData.verified;
+        chartInstance.data.datasets[2].data = filteredData.rejected;
+        chartInstance.update();
+    }
+
+    document.querySelector('.card').addEventListener('mouseenter', () => {
+        document.querySelector('.card').style.transform = 'translateY(-5px)';
+        document.querySelector('.card').style.boxShadow = 'var(--shadow-lg)';
+    });
+
+    document.querySelector('.card').addEventListener('mouseleave', () => {
+        document.querySelector('.card').style.transform = '';
+        document.querySelector('.card').style.boxShadow = 'var(--shadow-sm)';
+    });
+</script>
+{% endblock content %}
