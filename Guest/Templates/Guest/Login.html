@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side Image Section -->
+        <div class="image-section">
+            <h2>Welcome Back</h2>
+            <p>Please log in using your personal information to stay connected with us.</p>
+        </div>
+
+        <!-- Right Side Login Form -->
+        <div class="login-box">
+            <h2>LOGIN</h2>
+            <form action="#" method="post">
+                {% csrf_token %}
+                <br>
+                <div class="input-group">
+                    <input type="email" name="txt_email" id="email" placeholder="Email" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="txt_pass" id="password" placeholder="Password" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <br>
+                <!-- <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div> -->
+                <button type="submit">Log In</button>
+                <p>Don't have an account? <a href="{% url 'Guest:index' %}">Sign Up</a></p>
+                
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+<style>
+    /* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+/* Main Container */
+.container {
+    display: flex;
+    width: 800px;
+    height: 450px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Left Side Image Section */
+.image-section {
+    flex: 1;
+    background: url("{% static 'Main/images/Screenshot 2025-03-14 123618-Photoroom.jpg' %}") no-repeat center center/cover;
+    color: white;
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Right Side Login Form */
+.login-box {
+    flex: 1;
+    padding: 40px;
+    text-align: center;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Input Fields */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+.input-group i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: gray;
+}
+
+/* Forgot Password */
+.forgot-password {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.forgot-password a {
+    text-decoration: none;
+    color: #ffcc00;
+    font-size: 14px;
+}
+
+/* Login Button */
+button {
+    width: 100%;
+    background: #ffcc00;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #ffcc00;
+}
+
+/* Signup Link */
+p {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+p a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+    }
+
+    .image-section {
+        height: 200px;
+    }
+}
+
+</style>
+
+{% if msg %}
+<script>
+    alert('{{msg}}');
+</script>
+{% endif %}
