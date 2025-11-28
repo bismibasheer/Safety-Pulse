@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View RTO</title>
+</head>
+<body>
+<form action="" method="post">
+    {%csrf_token%}
+
+    <table id="result">
+        <tr>
+            <th>#</th>
+            <th><i class="fas fa-user"></i> Name</th>
+            <th><i class="fas fa-envelope"></i> Email</th>
+            <th><i class="fas fa-phone"></i> Contact</th>
+            <th><i class="fas fa-map-marked-alt"></i> Address</th>
+            <th><i class="fas fa-city"></i> District</th>
+            <th><i class="fas fa-map-pin"></i> Place</th>
+            <th><i class="fas fa-camera"></i> Photo</th>
+            <th colspan="2"><i class="fas fa-cogs"></i> Action</th>
+        </tr>
+        {% if RTO %}
+            {% for i in RTO %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.rto_name }}</td>
+                <td>{{ i.rto_email }}</td>
+                <td>{{ i.rto_contact }}</td>
+                <td>{{ i.rto_address }}</td>
+                <td>{{ i.place.district.district_name }}</td>
+                <td>{{ i.place.place_name }}</td>
+                <td><img src="{{ i.rto_photo.url }}" alt="photo" style="width: 80px; height: 80px;"></td>
+                <td><a href="{% url 'MVD:requestsend' i.id id %}" class="action-btn request-btn"><i class="fas fa-paper-plane"></i> Request</a></td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="9" class="no-results">No RTOs found</td>
+            </tr>
+        {% endif %}
+    </table>
+    </form></body></html>    

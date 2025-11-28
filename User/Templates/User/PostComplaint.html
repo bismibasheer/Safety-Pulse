@@ -1,0 +1,558 @@
+{% extends 'User/Header.html' %}
+{% load static %}
+{% block title %}Post Complaint{% endblock %}
+{% block content %}
+<div class="containers">
+    <center>
+        <h2>Post Complaint</h2>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-containers">
+                <table>
+                    <tr>
+                        <th>Title</th>
+                        <td>
+                            <select name="sel_category" id="sel_category">
+                                {% for i in Category %}
+                                    <option value="{{i.id}}">{{i.category_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Vehicle Number</th>
+                        <td>
+                            <input type="text" name="txt_vehicle" id="vehicle" required>
+                            <span id="alert"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>
+                            <textarea name="txt_com" id="Complaint" required placeholder="Enter the Description"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>File</th>
+                        <td>
+                            <input type="file" name="txt_file" id="file" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <input type="submit" value="Submit" name="txt_submit">
+                            <input type="submit" value="Cancel" name="txt_cancel">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>MVD Name</th>
+                    <th>District</th>
+                    <th>Place</th>
+                    <th>Contact</th>
+                    <th>Vehicle Number</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>File</th>
+                    <th>Status</th>
+                </tr>
+                {% for i in complaint %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{i.MVD.mvd_name}}</td>
+                        <td>{{i.MVD.place.district.district_name}}</td>
+                        <td>{{i.MVD.place.place_name}}</td>
+                        <td>{{i.MVD.mvd_contact}}</td>
+                        <td>{{i.vehicle_number.vehicle_number}}</td>
+                        <td>{{i.Category.category_name}}</td>
+                        <td>{{i.complaint_description}}</td>
+                        <td>
+                            <a href="#" onclick="openProof('{{i.complaint_photo.url}}'); return false;">Proof</a>
+                        </td>
+                        <td>
+                            {% if i.complaint_status == 0 %}
+                                Pending
+                            {% elif i.complaint_status == 1 %}
+                                Accepted
+                            {% elif i.complaint_status == 2 %}
+                                Rejected
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </center>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#vehicle").change(function () {
+        var did = $(this).val();
+        var ur = "{% url 'User:ajaxchecknumber' %}";
+        $.ajax({
+            url: ur,
+            data: { did: did },
+            success: function (data) {
+                if (data.status) {
+                    document.getElementById("alert").innerHTML = data.msg;
+                    document.getElementById('alert').style.color = "red";
+                    document.getElementById("vehicle").value = "";
+                } else {
+                    document.getElementById("alert").innerHTML = data.msg;
+                    document.getElementById('alert').style.color = "green";
+                }
+            },
+            error: function () {
+                console.log("AJAX error occurred");
+            }
+        });
+    });
+
+    function openProof(url) {
+        // Create modal overlay
+        let modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        `;
+
+        // Create modal content
+        let modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        modalContent.style.cssText = `
+            position: relative;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        `;
+
+        // Add close button (using plain text as fallback if Font Awesome is missing)
+        let closeBtn = document.createElement('span');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '<i class="fas fa-times" style="display: inline-block;">×</i>'; // Fallback to × if Font Awesome fails
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #ff0000;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+        `;
+        closeBtn.onclick = function() {
+            document.body.removeChild(modal);
+        };
+
+        // Add image
+        let img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Proof Image';
+        img.style.cssText = `
+            max-width: 100%;
+            max-height: 80vh;
+            border: 2px solid #008080;
+            border-radius: 5px;
+        `;
+
+        // Assemble modal
+        modalContent.appendChild(closeBtn);
+        modalContent.appendChild(img);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+
+        // Close modal on outside click or Escape key
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        };
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.body.removeChild(modal);
+            }
+        }, { once: true }); // Ensure event listener is removed after use
+    }
+</script>
+<style>
+    :root {
+        --gradient-bg: linear-gradient(90deg, #008080, #53e7d8);
+        --text-dark: #1a1a1a;
+        --text-light: #5f6f81;
+        --bg-light: #f8f9fa;
+        --card-bg: #ffffff;
+        --border-color: #e0e0e0;
+        --highlight-color: #008080;
+        --action-color: #83c5be;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --error-color: #d32f2f;
+        --success-color: #2e7d32;
+    }
+
+    body {
+        background: var(--bg-light);
+        font-family: 'Inter', sans-serif;
+        color: var(--text-dark);
+        margin: 0;
+        padding: 0;
+    }
+
+    .containers {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 1.5rem 0;
+        background: var(--gradient-bg);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-align: center;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .form-containers {
+        width: 100%;
+        max-width: 700px;
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        margin-bottom: 3rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-containers:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .form-containers table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border: none;
+    }
+
+    .form-containers th {
+        background: var(--gradient-bg);
+        color: #fff;
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        width: 30%;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .form-containers td {
+        padding: 1rem;
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-containers select,
+    .form-containers input[type="text"],
+    .form-containers textarea,
+    .form-containers input[type="file"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #fafafa;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-containers select:focus,
+    .form-containers input[type="text"]:focus,
+    .form-containers textarea:focus,
+    .form-containers input[type="file"]:focus {
+        border-color: var(--highlight-color);
+        box-shadow: 0 0 0 3px rgba(0, 109, 119, 0.1);
+        outline: none;
+    }
+
+    .form-containers textarea {
+        height: 120px;
+        resize: none;
+        font-family: inherit;
+    }
+
+    .form-containers input[type="submit"] {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0.5rem;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .form-containers input[type="submit"][name="txt_submit"] {
+        background: var(--highlight-color);
+        color: #fff;
+    }
+
+    .form-containers input[type="submit"][name="txt_cancel"] {
+        background: var(--error-color);
+        color: #fff;
+    }
+
+    .form-containers input[type="submit"][name="txt_submit"]:hover {
+        background: var(--action-color);
+        transform: translateY(-2px);
+    }
+
+    .form-containers input[type="submit"][name="txt_cancel"]:hover {
+        background: #b71c1c;
+        transform: translateY(-2px);
+    }
+
+    #alert {
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        display: block;
+        font-weight: 500;
+    }
+
+    #alert:empty {
+        display: none;
+    }
+
+    .table-container {
+        width: 100%;
+        max-width: 1200px;
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .table-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .table-container table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table-container th {
+        background: var(--gradient-bg);
+        color: #fff;
+        padding: 1rem;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+    }
+
+    .table-container td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        text-align: center;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+    }
+
+    .table-container tr:nth-child(even) {
+        background: #f4f6f8;
+    }
+
+    .table-container tr:hover {
+        background: rgba(0, 109, 119, 0.05);
+        transition: background 0.3s ease;
+    }
+
+    .table-container a {
+        color: var(--highlight-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .table-container a:hover {
+        color: var(--action-color);
+        text-decoration: underline;
+    }
+
+    /* Modal styles */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        position: relative;
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow: auto;
+        text-align: center;
+        box-shadow: var(--shadow);
+        animation: slideIn 0.3s ease;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 1.5rem;
+        color: var(--error-color);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+        color: #b71c1c;
+    }
+
+    .modal-content img {
+        max-width: 100%;
+        max-height: 80vh;
+        border: 2px solid var(--highlight-color);
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+
+    .modal-content img:hover {
+        transform: scale(1.02);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .containers {
+            padding: 15px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .form-containers,
+        .table-container {
+            padding: 1.5rem;
+        }
+
+        .form-containers th,
+        .form-containers td,
+        .table-container th,
+        .table-container td {
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+
+        .form-containers select,
+        .form-containers input[type="text"],
+        .form-containers textarea,
+        .form-containers input[type="file"] {
+            font-size: 0.95rem;
+            padding: 0.65rem;
+        }
+
+        .form-containers input[type="submit"] {
+            font-size: 0.95rem;
+            padding: 0.65rem 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        .form-containers th,
+        .form-containers td,
+        .table-container th,
+        .table-container td {
+            font-size: 0.85rem;
+            padding: 0.5rem;
+        }
+
+        .form-containers select,
+        .form-containers input[type="text"],
+        .form-containers textarea,
+        .form-containers input[type="file"] {
+            font-size: 0.9rem;
+        }
+
+        .form-containers input[type="submit"] {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+    }
+</style>
+{% if msg %}
+<script>
+    alert("{{ msg }}");
+    window.location="{% url 'User:postcomplaint' id %}"
+</script>
+{% endif %}
+{% endblock %}

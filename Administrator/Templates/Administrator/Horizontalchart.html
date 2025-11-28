@@ -1,0 +1,376 @@
+{% extends 'Administrator/Head.html' %}
+{% block content %}
+<div class="header">
+    <div class="header-content">
+        <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="20" x2="23" y2="20"></line>
+                <line x1="1" y1="15" x2="23" y2="15"></line>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+                <line x1="1" y1="5" x2="23" y2="5"></line>
+            </svg>
+            Complaints Per Month
+        </h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="search-container mb-4">
+            <input type="text" id="monthSearch" placeholder="Search by month..." class="w-full p-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-700">
+        </div>
+        <h2 class="card-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="20" x2="23" y2="20"></line>
+                <line x1="1" y1="15" x2="23" y2="15"></line>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+                <line x1="1" y1="5" x2="23" y2="5"></line>
+            </svg>
+            Monthly Complaints Chart
+        </h2>
+        <div class="chart-container">
+            <canvas id="complaintChart2"></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --purple-900: #4c1d95;
+        --purple-800: #5b21b6;
+        --purple-700: #6d28d9;
+        --purple-600: #7c3aed;
+        --purple-500: #a78bfa;
+        --purple-400: #a78bfa;
+        --purple-300: #c4b5fd;
+        --purple-200: #ddd6fe;
+        --purple-100: #ede9fe;
+        --purple-50: #f5f3ff;
+        --danger: #ef4444;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --gray-900: #111827;
+        --gray-800: #1f2937;
+        --gray-700: #374151;
+        --gray-600: #4b5563;
+        --gray-500: #6b7280;
+        --gray-400: #9ca3af;
+        --gray-300: #d1d5db;
+        --gray-200: #e5e7eb;
+        --gray-100: #f3f4f6;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--purple-50);
+        color: var(--gray-800);
+        line-height: 1.6;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .header {
+        background: linear-gradient(135deg, var(--purple-700), var(--purple-800));
+        color: white;
+        padding: 2rem;
+        border-radius: 0 0 1rem 1rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        transform: rotate(30deg);
+        animation: shine 8s infinite linear;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 svg {
+        width: 2rem;
+        height: 2rem;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow-sm);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--purple-200);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideUp 0.5s ease-out;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--purple-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .card-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, var(--purple-500), var(--purple-700));
+        border-radius: 3px;
+    }
+
+    .card-title svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        stroke-width: 1.5;
+    }
+
+    .search-container {
+        margin-bottom: 1.5rem;
+    }
+
+    #monthSearch {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--purple-200);
+        border-radius: 0.5rem;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        outline: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #monthSearch:focus {
+        border-color: var(--purple-500);
+        box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.2);
+    }
+
+    .chart-container {
+        display: flex;
+        justify-content: center;
+        animation: fadeIn 0.7s ease-out;
+    }
+
+    canvas {
+        max-width: 100%;
+        animation: fadeIn 0.7s ease-out;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes shine {
+        0% { transform: rotate(30deg) translate(-10%, -10%); }
+        100% { transform: rotate(30deg) translate(10%, 10%); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+            animation: none;
+        }
+        
+        .header {
+            padding: 1.5rem 1rem;
+            border-radius: 0;
+        }
+        
+        .header::before {
+            animation: none;
+            display: none;
+        }
+        
+        .card {
+            padding: 1.5rem;
+            animation: none;
+            max-width: 100%;
+        }
+        
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        #monthSearch {
+            font-size: 0.75rem;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartDatamonth = {{ data2 | safe }};
+
+    const labelmonth = chartDatamonth.map(item => item.label);
+    const valuesmonth = chartDatamonth.map(item => item.value);
+
+    const ctxr = document.getElementById('complaintChart2').getContext('2d');
+
+    const chart = new Chart(ctxr, {
+        type: 'bar',
+        data: {
+            labels: labelmonth,
+            datasets: [{
+                label: 'Monthly Complaints',
+                data: valuesmonth,
+                backgroundColor: '#6d28d9',
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Monthly Complaints Trend',
+                    font: {
+                        size: 14,
+                        weight: 'bold'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 10
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Complaints',
+                        font: {
+                            size: 11,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: '#f1f1f1'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month',
+                        font: {
+                            size: 11,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        minRotation: 45,
+                        font: {
+                            size: 10
+                        }
+                    },
+                    grid: {
+                        color: '#f1f1f1'
+                    }
+                }
+            }
+        }
+    });
+
+    // Search functionality
+    document.getElementById('monthSearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const filteredLabels = labelmonth.filter(label => label.toLowerCase().includes(searchTerm));
+        const filteredValues = filteredLabels.map(label => {
+            const index = labelmonth.indexOf(label);
+            return valuesmonth[index];
+        });
+
+        chart.data.labels = filteredLabels;
+        chart.data.datasets[0].data = filteredValues;
+        chart.update();
+    });
+
+    document.querySelector('.card').addEventListener('mouseenter', () => {
+        document.querySelector('.card').style.transform = 'translateY(-5px)';
+        document.querySelector('.card').style.boxShadow = 'var(--shadow-lg)';
+    });
+
+    document.querySelector('.card').addEventListener('mouseleave', () => {
+        document.querySelector('.card').style.transform = '';
+        document.querySelector('.card').style.boxShadow = 'var(--shadow-sm)';
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,204 @@
+{% extends 'RTO/Header.html' %}
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    .page-title {
+        text-align: center;
+        color: #BBB7A8;
+        padding: 40px 0 20px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .card-container {
+        max-width: 1300px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .vehicle-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+
+    .vehicle-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        background: #fffffd;
+        padding: 20px;
+        color: white;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h3,
+    .card-header p {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .card-header a {
+        color: #fff;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 10px;
+        text-decoration: underline;
+    }
+
+    .violations-list {
+        padding: 20px;
+        background-color: #fdfdfd;
+    }
+
+    .violation-item {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .violation-number {
+        display: inline-block;
+        background: #f5c6cb;
+        color: #721c24;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .violation-title {
+        display: block;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1em;
+        margin: 8px 0 5px;
+    }
+
+    .violation-desc {
+        font-size: 0.95em;
+        color: #555;
+    }
+
+    .violation-proof a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 14px;
+        background-color: #e74c3c;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 0.9em;
+        transition: background-color 0.3s ease;
+    }
+
+    .violation-proof a:hover {
+        background-color: #c0392b;
+    }
+
+    .no-violation {
+        color: #999;
+        text-align: center;
+        font-style: italic;
+        padding: 20px;
+    }
+
+    /* Adding font-awesome icon styling */
+    .icon {
+        margin-right: 8px;
+    }
+    .card-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+.card-header a {
+    margin-top: 5px;
+}
+</style>
+
+<!-- Include Font Awesome CDN in your header template -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+<h2 class="page-title"><i class="fas fa-clipboard-list icon"></i>New Complaints</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="card-container">
+        {% for i in req %}
+        <div class="vehicle-card">
+            <div class="card-header" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                <h3><i class="fas fa-user icon"></i>User: {{ i.Vehicle.vehicleuser_name }}</h3>
+                <p><i class="fas fa-car icon"></i>Vehicle Number: {{ i.Vehicle.vehicle_number }}</p>
+                <a href="{% url 'RTO:verifymultiplerequest' i.id %}" style="margin-top: 10px;">
+                    <i class="fas fa-check-circle icon"></i>Verify
+                </a>
+            </div>
+            <style>
+                .card-header {
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 15px;
+                }
+                
+                .card-header h3, 
+                .card-header p {
+                    margin: 5px 0;
+                    font-size: 0.95rem;
+                }
+                
+                .card-header a {
+                    margin-top: 8px;
+                    padding: 5px 12px;
+                    background-color: #d32f2f;
+                    color: white;
+                    border-radius: 4px;
+                    text-decoration: none;
+                    font-size: 0.85rem;
+                }
+                
+                /* Or alternatively, if you want to style all icons globally */
+                .icon {
+                    font-size: 0.9em !important;
+                }
+                </style>
+            
+
+            <div class="violations-list">
+                {% for violation in i.Vehicle.tbl_complaint_set.all %}
+                <div class="violation-item">
+                    <span class="violation-number">#{{ forloop.counter }}</span>
+                    <span class="violation-title"><i class="fas fa-exclamation-triangle icon"></i>{{ violation.Category.category_name }}</span>
+                    <span class="violation-desc">{{ violation.complaint_description }}</span>
+                    <div class="violation-proof">
+                        <a href="{{ violation.complaint_photo.url }}" target="_blank"><i class="fas fa-eye icon"></i>View Proof</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="no-violation">No violations recorded</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</form>
+{% endblock content %}

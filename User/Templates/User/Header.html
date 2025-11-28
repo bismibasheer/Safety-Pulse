@@ -1,0 +1,279 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SAFETY PULSE</title>
+
+    <!-- CSS FILES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700;900&display=swap"
+        rel="stylesheet">
+
+    <link href="{% static 'Main/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/css/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'Main/css/magnific-popup.css' %}">
+
+    <link href="{% static 'Main/css/aos.css' %}" rel="stylesheet">
+
+    <link href="{% static 'Main/css/templatemo-nomad-force.css'%}" rel="stylesheet">
+
+    <!--
+
+TemplateMo 567 Nomad Force
+
+https://templatemo.com/tm-567-nomad-force
+
+-->
+</head>
+
+<body>
+
+    <main>
+
+      
+
+        <nav class="navbar navbar-expand-lg bg-light shadow-lg">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'User:UserHome' %}">
+                    <strong>Safety Pulse</strong>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'User:UserHome' %}">Home</a>
+                        </li>
+                     
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'User:Myprofile' %}">My Profile</a>
+                        </li> 
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'User:contentlist' %}">View Content</a>
+                        </li>
+
+                        <li class="nav-item"><a class="nav-link" href="{% url 'User:mvdlist' %}">MVD List</a></li>
+                        <style>
+                            .navbar-nav .nav-item .nav-link::after {
+                                content: none !important;
+                            }
+
+                            .navbar-nav .nav-item .nav-link:focus,
+                            .navbar-nav .nav-item .nav-link:active {
+                                outline: none !important;
+                                box-shadow: none !important;
+                                background: transparent !important;
+                            }
+                        </style>
+
+
+                        <!-- Navigation Bar Styles -->
+                        <style>
+                            /* Navbar links - Make them black */
+                            .nav-item .nav-link {
+                                font-weight: bold;
+                                color: black !important;
+                                text-align: center;
+                            }
+
+                            /* Dropdown menu styling */
+                            .dropdown-menu {
+                                background-color: black !important;
+                                border: none;
+                                text-align: center;
+                            }
+
+                            /* Dropdown item styling */
+                            .dropdown-item {
+                                color: yellow !important;
+                                font-weight: bold;
+                            }
+
+                            /* Hover effect for dropdown items */
+                            .dropdown-item:hover {
+                                background-color: yellow !important;
+                                color: black !important;
+                            }
+
+                            /* Navbar Dropdown Styling */
+                            .dropdown-menu {
+                                background-color: #333 !important;
+                                border-radius: 8px;
+                                border: none;
+                                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                                padding: 10px 0;
+                            }
+
+                            .dropdown-item {
+                                color: white !important;
+                                font-weight: bold;
+                                padding: 10px 20px;
+                                transition: background 0.3s ease-in-out;
+                            }
+
+                            .dropdown-item:hover {
+                                background-color: #ffcc00 !important;
+                                color: black !important;
+                            }
+                        </style>
+
+
+                        <!-- Navigation Bar Items -->
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-black text-center"
+                                href="{% url 'User:searchdetails' %}">Check Challan</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link fw-bold text-black text-center"
+                                href="{% url 'User:feedback' %}">Feedback</a>
+                        </li> -->
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-black text-center"
+                                href="{% url 'User:rating' %}">Rating</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-black text-center"
+                            href="{% url 'User:repliedcomplaint' %}">Reply Complaint<span id="cart-badge"
+                            class="badge"></span></a>
+                            <style>
+                                .badge {
+                                    background-color: #ff5733;
+                                    /* Example color (orange) */
+                                    color: white;
+                                    /* Text color */
+                                    padding: 2px 6px;
+                                    /* Vertical and horizontal padding */
+                                    border-radius: 10px;
+                                    /* Rounded edges for a circular look */
+                                    font-size: 12px;
+                                    /* Smaller text size */
+                                    margin-left: 5px;
+                                    /* Space between "Cart" and the badge */
+                                }
+                            </style>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" href="{% url 'User:logout' %}" title="Logout">
+                                <i class="bi bi-box-arrow-right" style="font-size: 22px; color: #000 !important;"></i>
+                            </a>
+                        </li>
+                        
+                        <style>
+                            .logout-icon {
+                            flex-shrink: 0;
+                        }
+                        
+                        
+                        /* Logout icon fix */
+                        .custom-nav-link i {
+                            font-size: 20px;
+                            color: #000 !important;
+                        }
+                        </style>
+
+                        
+                </div>
+            </div>
+        </nav>
+<div class="d-flex justify-content-center pt-5" style="min-height: 550px;">
+
+    {% block content %}
+    {% endblock  %}
+
+</div>
+    <main>
+        <!-- Footer -->
+        <footer class="site-footer bg-dark text-white py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 text-center text-md-start">
+                        <h5>
+                            <i class="bi-geo-alt-fill me-2"></i>
+                            Safety Pulse Initiative, Global Outreach
+                        </h5>
+                        <p class="text-muted">Ensuring public safety through digital reporting and awareness.</p>
+                        <a href="mailto:contact@safetypulse.com"
+                        class="custom-link" style="color: #008080;">contact@safetypulse.com</a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 text-center">
+                        <p class="mb-0">Copyright © Safety Pulse 2025</p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 text-center text-md-end">
+                        <ul class="social-icon list-inline">
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-facebook"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-twitter"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-whatsapp"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-instagram"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-youtube"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JAVASCRIPT FILES -->
+    <!-- <script src="{% static 'Main/js/jquery.min.js'%}"></script> -->
+    <script src="{% static 'Main/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'Main/js/jquery.sticky.js'%}"></script>
+    <script src="{% static 'Main/js/aos.js'%}"></script>
+    <script src="{% static 'Main/js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'Main/js/magnific-popup-options.js'%}"></script>
+    <script src="{% static 'Main/js/scrollspy.min.js'%}"></script>
+    <script src="{% static 'Main/js/custom.js'%}"></script>
+
+    <script>
+        // Function to fetch cart count and update badge
+        function updateCartCount() {
+            fetch("{% url 'User:get_comp_count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('cart-badge');
+                    // alert(badge)
+                    badge.textContent = data.compcount;
+                    // Optional: Hide badge if count is 0
+                    badge.style.display = data.compcount > 0 ? 'inline' : 'none';
+                })
+                .catch(error => console.error('Error fetching cart count:', error));
+        }
+    
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', updateCartCount);
+    
+        // Optional: Update periodically (e.g., every 10 seconds)
+        setInterval(updateCartCount, 10000);
+    </script>
+</body>
+
+</html>
+<style>
+    .portfolio-image {
+        width: 100%;
+        height: 300px;
+        /* Adjust height as needed */
+       
+        object-fit: cover;
+    }
+    :root {
+    --white-color: #FFFFFF;
+    --primary-color: #008080;
+   
+    }
+    
+</style>

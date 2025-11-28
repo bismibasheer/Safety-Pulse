@@ -1,0 +1,323 @@
+{% extends 'RTO/Header.html' %}
+
+{% block head %}
+
+{% endblock head %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <!-- You already have this in your head block -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script src="https://kit.fontawesome.com/YOUR_KIT_CODE.js" crossorigin="anonymous"></script>
+
+    <h1><i class="fas fa-edit"></i> Edit Profile</h1>
+    
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Photo Edit Section -->
+        <div class="profile-photo-container">
+            <label for="txt_file">
+                {% if RTO.rto_photo %}
+                    <img src="{{ RTO.rto_photo.url }}" alt="Profile Picture" id="profile-pic-preview">
+                {% else %}
+                    <img src="https://via.placeholder.com/100?text=No+Photo" alt="No Profile Picture" id="profile-pic-preview">
+                {% endif %}
+                <span class="edit-icon">
+                    <i class="fas fa-pencil-alt"></i>
+                </span>
+            </label>
+            <input type="file" name="txt_file" id="txt_file" class="hidden-file-input" accept="image/*" onchange="previewImage(event)">
+        </div>
+
+        <!-- Profile Info Form -->
+        <div class="form-container">
+            <div class="form-card">
+                <label for="txt_name"><i class="fas fa-user"></i> Name</label>
+                <input type="text" name="txt_name" id="txt_name" value="{{RTO.rto_name}}" 
+                       title="Name: Only alphabets, spaces, first letter capitalized" 
+                       pattern="^[A-Z]+[a-zA-Z ]*$" required>
+            </div>
+            <div class="form-card">
+                <label for="txt_email"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" name="txt_email" id="txt_email" value="{{RTO.rto_email}}" required>
+            </div>
+            <div class="form-card">
+                <label for="txt_con"><i class="fas fa-phone"></i> Contact</label>
+                <input type="text" name="txt_con" id="txt_con" value="{{RTO.rto_contact}}" 
+                       pattern="[7-9]{1}[0-9]{9}" 
+                       title="Phone: 10 digits starting with 7-9" required>
+            </div>
+            <div class="form-card">
+                <label for="txt_add"><i class="fas fa-map-marker-alt"></i> Address</label>
+                <input type="text" name="txt_add" id="txt_add" value="{{RTO.rto_address}}" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="btn_submit" class="update-btn"><i class="fas fa-save"></i> Update</button>
+                <a href="{% url 'RTO:Myprofile' %}" class="cancel-btn"><i class="fas fa-times"></i> Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('profile-pic-preview');
+        const file = event.target.files[0];
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
+<style>
+    :root {
+        --primary-color: #F87171; /* Coral */
+        --accent-color: #FFFFFF; /* White */
+        --text-color: #111827; /* Charcoal */
+        --error-color: #DC2626; /* Red */
+        --bg-color: #F9FAFB;
+        --card-bg: #F8F8F8;
+        --shadow: 0 5px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .edit-profile-container {
+        max-width: 580px;
+        margin: 30px auto;
+        background: var(--accent-color);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: var(--shadow);
+        animation: popIn 0.6s ease-out;
+    }
+
+    @keyframes popIn {
+        from { opacity: 0; transform: scale(0.97); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--primary-color);
+        font-size: 2.3em;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-weight: 600;
+    }
+
+    h1 i {
+        font-size: 1.15em;
+        color: var(--primary-color);
+        transition: transform 0.3s ease;
+    }
+
+    h1 i:hover {
+        transform: scale(1.2);
+    }
+
+    .profile-photo-container {
+        text-align: center;
+        margin-bottom: 25px;
+        position: relative;
+        animation: fadeIn 0.7s ease-out 0.1s forwards;
+        opacity: 0;
+    }
+
+    .profile-photo-container label {
+        cursor: pointer;
+        display: inline-block;
+        position: relative;
+    }
+
+    .profile-photo-container img {
+        border-radius: 12px;
+        border: 2px solid var(--primary-color);
+        object-fit: cover;
+        width: 100px;
+        height: 100px;
+        transition: filter 0.3s ease;
+    }
+
+    .profile-photo-container img:hover {
+        filter: brightness(95%);
+    }
+
+    .edit-icon {
+        position: absolute;
+        bottom: 6px;
+        right: 6px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        padding: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease;
+    }
+
+    .edit-icon i {
+        color: var(--accent-color);
+        font-size: 0.95em;
+    }
+
+    .profile-photo-container:hover .edit-icon {
+        background: var(--text-color);
+    }
+
+    .hidden-file-input {
+        display: none;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        animation: fadeIn 0.7s ease-out forwards;
+        opacity: 0;
+    }
+
+    .form-card:nth-child(1) { animation-delay: 0.2s; }
+    .form-card:nth-child(2) { animation-delay: 0.3s; }
+    .form-card:nth-child(3) { animation-delay: 0.4s; }
+    .form-card:nth-child(4) { animation-delay: 0.5s; }
+
+    .form-card label {
+        color: var(--primary-color);
+        font-weight: 500;
+        font-size: 0.9em;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .form-card label i {
+        font-size: 0.95em;
+        color: var(--primary-color);
+    }
+
+    .form-card input {
+        border: none;
+        border-bottom: 2px solid var(--primary-color);
+        background: transparent;
+        padding: 7px 0;
+        font-size: 1em;
+        color: var(--text-color);
+        transition: border-color 0.3s ease;
+    }
+
+    .form-card input:focus {
+        outline: none;
+        border-bottom-color: var(--text-color);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        animation: fadeIn 0.7s ease-out 0.6s forwards;
+        opacity: 0;
+    }
+
+    .update-btn, .cancel-btn {
+        padding: 10px 28px;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.3s ease, transform 0.3s ease;
+        text-decoration: none;
+    }
+
+    .update-btn {
+        background: var(--primary-color);
+        color: var(--accent-color);
+    }
+
+    .update-btn:hover {
+        background: var(--text-color);
+        transform: translateY(-2px);
+    }
+
+    .cancel-btn {
+        background: var(--error-color);
+        color: var(--accent-color);
+    }
+
+    .cancel-btn:hover {
+        background: #B91C1C;
+        transform: translateY(-2px);
+    }
+
+    i {
+        display: inline-block !important;
+        visibility: visible !important;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 750px) {
+        .edit-profile-container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        h1 {
+            font-size: 1.9em;
+        }
+
+        .profile-photo-container img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .form-card {
+            padding: 12px;
+        }
+
+        .update-btn, .cancel-btn {
+            padding: 8px 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .form-card {
+            gap: 6px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .update-btn, .cancel-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock content %}

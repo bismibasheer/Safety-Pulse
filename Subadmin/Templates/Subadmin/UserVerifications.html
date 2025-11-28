@@ -1,0 +1,586 @@
+{% extends 'Subadmin/Head.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Verifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d9488;           /* Teal color */
+            --primary-light: #14b8a6;     /* Lighter teal */
+            --primary-dark: #0f766e;      /* Darker teal */
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin: 0;
+            /* padding: 20px; */
+            animation: fadeInBody 0.8s ease-out;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInHeader 1s ease-out;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            animation: shine 8s infinite linear;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: box-shadow 0.3s ease;
+            table-layout: fixed; /* Ensures equal column widths */
+        }
+
+        .data-table:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .data-table th {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+            transition: background-color 0.2s ease;
+            word-wrap: break-word; /* Allows text to wrap for full display */
+            white-space: normal; /* Removes nowrap to show full text */
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: var(--gray-50);
+        }
+
+        .data-table tr {
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        .data-table tr:hover {
+            background-color: var(--gray-100);
+            transform: scale(1.01);
+            transition: transform 0.3s ease;
+        }
+
+        /* Equal Column Widths (Adjusted for STATUS header) */
+        .data-table th:nth-child(1), .data-table td:nth-child(1) { width: 5%; } /* # */
+        .data-table th:nth-child(2), .data-table td:nth-child(2) { width: 10%; } /* Name */
+        .data-table th:nth-child(3), .data-table td:nth-child(3) { width: 15%; } /* Email */
+        .data-table th:nth-child(4), .data-table td:nth-child(4) { width: 10%; } /* Contact */
+        .data-table th:nth-child(5), .data-table td:nth-child(5) { width: 15%; } /* Address */
+        .data-table th:nth-child(6), .data-table td:nth-child(6) { width: 10%; } /* District */
+        .data-table th:nth-child(7), .data-table td:nth-child(7) { width: 10%; } /* Place */
+        .data-table th:nth-child(8), .data-table td:nth-child(8) { width: 8%; } /* Photo */
+        .data-table th:nth-child(9), .data-table td:nth-child(9) { width: 7%; } /* Proof (reduced to compensate) */
+        .data-table th:nth-child(10), .data-table td:nth-child(10) { width: 10%; } /* Status (increased for full text) */
+        .data-table th:nth-child(11), .data-table td:nth-child(11) { width: 10%; min-width: 120px; } /* Actions (adjusted) */
+
+        .user-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--gray-200);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-image:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            white-space: nowrap;
+        }
+
+        .badge-accept {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge-reject {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .action-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 2rem;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .back-link:active::after {
+            animation: ripple 1s ease-out;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .verified {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInModal 0.3s ease-out;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background-color: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* Animations */
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInHeader {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRow {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-10%, -10%); }
+            100% { transform: rotate(30deg) translate(10%, 10%); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            20% { transform: scale(25, 25); opacity: 1; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .user-image {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .section-title {
+                padding: 0.75rem;
+                font-size: 1.25rem;
+            }
+            
+            .action-badge {
+                display: block;
+                margin: 0.5rem 0;
+            }
+            
+            .back-link {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+
+            <h2 class="section-title">
+                <i class="fas fa-user-clock"></i> PENDING VERIFICATION
+            </h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>District</th>
+                        <th>Place</th>
+                        <th>Photo</th>
+                        <th>Proof</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in user %}
+                        <tr style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{i.user_name}}</td>
+                            <td>{{i.user_email}}</td>
+                            <td>{{i.user_contact}}</td>
+                            <td>{{i.user_address}}</td>
+                            <td>{{i.place.district.district_name}}</td>
+                            <td>{{i.place.place_name}}</td>
+                            <td>
+                                <img src="{{i.user_photo.url}}" alt="User Photo" class="user-image" onclick="openModal(this.src, 'User Photo')">
+                            </td>
+                            <td>
+                                <img src="{{i.user_proof.url}}" alt="User Proof" class="user-image" onclick="openModal(this.src, 'User Proof')">
+                            </td>
+                            <td><span class="status-badge pending">Pending</span></td>
+                            <td>
+                                <a href="{% url 'Subadmin:useraccept' i.id %}" class="action-badge badge-accept">
+                                    <i class="fas fa-check-circle"></i> Accept
+                                </a>
+                                <a href="{% url 'Subadmin:userreject' i.id %}" class="action-badge badge-reject">
+                                    <i class="fas fa-times-circle"></i> Reject
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2 class="section-title">
+                <i class="fas fa-user-check"></i> VERIFIED USERS
+            </h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>District</th>
+                        <th>Place</th>
+                        <th>Proof</th>
+                        <th>Photo</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in accept %}
+                        <tr style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{i.user_name}}</td>
+                            <td>{{i.user_email}}</td>
+                            <td>{{i.user_contact}}</td>
+                            <td>{{i.user_address}}</td>
+                            <td>{{i.place.district.district_name}}</td>
+                            <td>{{i.place.place_name}}</td>
+                            <td>
+                                <img src="{{i.user_proof.url}}" alt="User Proof" class="user-image" onclick="openModal(this.src, 'User Proof')">
+                            </td>
+                            <td>
+                                <img src="{{i.user_photo.url}}" alt="User Photo" class="user-image" onclick="openModal(this.src, 'User Photo')">
+                            </td>
+                            <td><span class="status-badge verified">Verified</span></td>
+                            <td>
+                                <a href="{% url 'Subadmin:userreject' i.id %}" class="action-badge badge-reject">
+                                    <i class="fas fa-times-circle"></i> Reject
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2 class="section-title">
+                <i class="fas fa-user-times"></i> REJECTED USERS
+            </h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>District</th>
+                        <th>Place</th>
+                        <th>Photo</th>
+                        <th>Proof</th>
+                        <th>Status</th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in reject %}
+                        <tr style="animation-delay: {{ forloop.counter0|divisibleby:2|yesno:'0.1s,0.2s' }}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{i.user_name}}</td>
+                            <td>{{i.user_email}}</td>
+                            <td>{{i.user_contact}}</td>
+                            <td>{{i.user_address}}</td>
+                            <td>{{i.place.district.district_name}}</td>
+                            <td>{{i.place.place_name}}</td>
+                            <td>
+                                <img src="{{i.user_photo.url}}" alt="User Photo" class="user-image" onclick="openModal(this.src, 'User Photo')">
+                            </td>
+                            <td>
+                                <img src="{{i.user_proof.url}}" alt="User Proof" class="user-image" onclick="openModal(this.src, 'User Proof')">
+                            </td>
+                            <td><span class="status-badge rejected">Rejected</span></td>
+                            <td>
+                               
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+          
+        </form>
+    </div>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        function openModal(src, alt) {
+            modalImage.src = src;
+            modalImage.alt = alt;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        // Close modal when clicking outside the image
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Add bounce effect to back link and action badges
+        document.querySelectorAll('.back-link, .action-badge').forEach(item => {
+            item.addEventListener('click', function(e) {
+                this.style.transform = 'translateY(-3px)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(0)';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock content %}

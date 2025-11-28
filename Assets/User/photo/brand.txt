@@ -1,0 +1,69 @@
+
+
+// app/Http/Controllers/BrandSalesController.php
+namespace App\Http\Controllers;
+
+use App\Models\Brand;
+use Illuminate\Http\Request;
+
+class BrandSalesController extends Controller
+{
+    public function showChart()
+    {
+        // Query to count customer requests per brand
+        $brandSales = Brand::withCount('customerRequests') // Use 'customerRequests' relation from Brand
+            ->get();
+
+        // Prepare data for the chart
+        $brands = $brandSales->pluck('name'); // assuming 'name' is the brand's name field
+        $sales = $brandSales->pluck('customer_requests_count'); // 'customer_requests_count' is the count of related customer requests
+
+        return view('brand_sales_chart', compact('brands', 'sales'));
+    }
+}
+
+
+
+
+
+
+<!-- resources/views/brand_sales_chart.blade.php -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Sales Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: auto;">
+        <canvas id="brandSalesChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('brandSalesChart').getContext('2d');
+        const brandSalesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($brands) !!},
+                datasets: [{
+                    label: 'Sales per Brand',
+                    data: {!! json_encode($sales) !!},
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

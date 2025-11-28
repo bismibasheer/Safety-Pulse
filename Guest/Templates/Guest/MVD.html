@@ -1,0 +1,478 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVD Registration</title>
+    
+    <!-- CSS FILES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-yellow: #f5ba1a;
+            --text-black: #000000;
+            --input-bg: #f2f2f2;
+            --border-grey: #cccccc;
+            --shadow-grey: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 14px;
+            background: url('{% static "Main/images/image2.png" %}') no-repeat center center/cover;
+            color: var(--text-black);
+            transition: background 0.3s ease-in-out;
+        }
+
+        .dark-mode {
+            background: url('{% static "Main/images/image1.png" %}') no-repeat center center/cover;
+            color: white;
+        }
+
+        .form_wrapper {
+            background: rgba(255, 255, 255, 0.5); /* Changed to semi-transparent white */
+            width: 600px;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 25px;
+            margin: 5% auto 0;
+            position: relative;
+            z-index: 1;
+            border-top: 5px solid var(--primary-yellow);
+            box-shadow: 0 0 3px var(--shadow-grey);
+            animation: expand 0.8s 0.6s ease-out forwards;
+            opacity: 0;
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .dark-mode .form_wrapper {
+            background: rgba(51, 51, 51, 0.5); /* Changed to semi-transparent dark */
+            color: white;
+        }
+
+        .title_container {
+            text-align: center;
+            padding-bottom: 15px;
+            color: var(--text-black);
+        }
+
+        .title_container h2 {
+            font-size: 1.5em;
+            line-height: 1.5em;
+            margin: 0;
+            color: var(--text-black);
+        }
+
+        .emblem_container {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+
+        .emblem_container .logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .input_field {
+            position: relative;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease-out;
+        }
+
+        .input_field span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--text-black);
+            height: 100%;
+            border-right: 1px solid var(--border-grey);
+            text-align: center;
+            width: 30px;
+            background: var(--input-bg);
+        }
+
+        .input_field span i {
+            padding-top: 10px;
+            color: var(--text-black);
+        }
+
+        .input_field input[type="text"],
+        .input_field input[type="email"],
+        .input_field input[type="password"],
+        .input_field textarea,
+        .input_field select {
+            width: 100%;
+            padding: 8px 10px 9px 35px;
+            height: 35px;
+            border: 1px solid var(--border-grey);
+            background: var(--input-bg);
+            box-sizing: border-box;
+            outline: none;
+            color: var(--text-black);
+            transition: all 0.30s ease-in-out;
+        }
+
+        .input_field textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .input_field input[type="file"] {
+            padding: 5px;
+            width: 95%;
+            background: var(--input-bg);
+            margin-left: 30px;
+        }
+
+        .input_field input:hover,
+        .input_field textarea:hover,
+        .input_field select:hover {
+            background: #e9e9e9;
+        }
+
+        .input_field input:focus,
+        .input_field textarea:focus,
+        .input_field select:focus {
+            box-shadow: 0 0 2px 1px rgba(245, 186, 26, 0.5);
+            border: 1px solid var(--primary-yellow);
+            background: #e9e9e9;
+        }
+
+        .button_container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="submit"] {
+            background: var(--primary-yellow);
+            height: 35px;
+            line-height: 35px;
+            width: 150px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.1em;
+            margin: 0 10px 10px;
+            transition: all 0.30s ease-in-out;
+        }
+
+        input[type="submit"]:hover {
+            background: #e0a917;
+        }
+
+        .credit {
+            text-align: center;
+            padding: 15px;
+            color: var(--primary-yellow);
+        }
+
+        .credit a {
+            color: #e0a917;
+        }
+
+        .dark-mode-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-control[type="file"] {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-grey);
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .form-control[type="file"]:hover {
+            background-color: #e9e9e9;
+            border-color: var(--border-grey);
+        }
+
+        .form-control[type="file"]:focus {
+            box-shadow: 0 0 2px 1px rgba(245, 186, 26, 0.5);
+            border-color: var(--primary-yellow);
+            background: #e9e9e9;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        @keyframes expand {
+            0% { transform: scale3d(1,0,1); opacity:0; }
+            25% { transform: scale3d(1,1.2,1); }
+            50% { transform: scale3d(1,0.85,1); }
+            75% { transform: scale3d(1,1.05,1); }
+            100% { transform: scale3d(1,1,1); opacity:1; }
+        }
+
+        @keyframes bounce {
+            0% { transform: translate3d(0,-25px,0); opacity:0; }
+            25% { transform: translate3d(0,10px,0); }
+            50% { transform: translate3d(0,-6px,0); }
+            75% { transform: translate3d(0,2px,0); }
+            100% { transform: translate3d(0,0,0); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .form_wrapper {
+                width: 90%;
+            }
+            .emblem_container .logo {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        .form_wrapper {
+    background: rgba(255, 255, 255, 0.5); /* Changed from #fff */
+    /* Rest of the properties remain unchanged */
+}
+.dark-mode .form_wrapper {
+    background: rgba(51, 51, 51, 0.5); /* Changed from #333 */
+    color: white;
+}
+    </style>
+</head>
+<body>
+    <main>
+        <section class="hero" id="hero">
+            <div class="heroText text-center">
+                <h1 class="text-white mt-5 mb-lg-4" data-aos="zoom-in" data-aos-delay="800">
+                    MVD Registration
+                </h1>
+                <p class="text-secondary-white-color" data-aos="fade-up" data-aos-delay="1000">
+                    Motor Vehicles Department Registration
+                </p>
+            </div>
+        </section>
+        <div class="form_wrapper">
+            <div class="form_container">
+                <div class="emblem_container">
+                    <img src="{% static 'Main/images/mvdlogo.jpg' %}" alt="MVD Logo" class="logo">
+                </div>
+                <div class="title_container">
+                    <h2>MVD Registration</h2>
+                </div>
+                <div class="dark-mode-icon">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </div>
+                <form id="mvdRegistrationForm" enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="success" name="success" value="{% if success %}true{% endif %}">
+                    <div class="input_field">
+                        <span><i class="fa fa-user"></i></span>
+                        <input type="text" name="txt_name" id="name" placeholder="Name" required 
+                            pattern="^[A-Z]+[a-zA-Z ]*$" 
+                            title="Name Allows Only Alphabets, Spaces and First Letter Must Be Capital Letter">
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-envelope"></i></span>
+                        <input type="email" name="txt_email" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-phone"></i></span>
+                        <input type="text" name="txt_contact" id="contact" placeholder="Contact" required 
+                            
+                            >
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-map-marker"></i></span>
+                        <textarea name="txt_address" id="address" placeholder="Address" required></textarea>
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-globe"></i></span>
+                        <select name="sel_district" id="sel_district" required>
+                            <option value="">Select District</option>
+                            {% for i in District %}
+                                <option value="{{i.id}}">{{i.district_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-location-arrow"></i></span>
+                        <select name="sel_place" id="sel_place" required>
+                            <option value="">Select Place</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="profilePhoto" class="form-label">📷 Profile Photo</label>
+                        <input class="form-control" type="file" name="txt_file" id="photo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="idProof" class="form-label">📄 ID Proof</label>
+                        <input class="form-control" type="file" name="txt_proof" id="Proof">
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-lock"></i></span>
+                        <input type="password" name="txt_pwd" id="password" placeholder="Password" 
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
+                            title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" 
+                            required>
+                        <i class="fa fa-eye toggle-password" onclick="togglePassword('password')"></i>
+                    </div>
+                    <div class="input_field">
+                        <span><i class="fa fa-lock"></i></span>
+                        <input type="password" name="txt_repass" id="repassword" placeholder="Re-type Password" required>
+                        <i class="fa fa-eye toggle-password" onclick="togglePassword('repassword')"></i>
+                    </div>
+                    <div class="button_container">
+                        <input type="submit" value="Register" name="btn_submit">
+                        <input type="submit" value="Cancel" name="btn_cancel">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <p class="credit">Developed by <a href="{% url 'Guest:index' %}" target="_blank">Safety Pulse</a></p>
+    </main>
+
+    <!-- JAVASCRIPT FILES -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Password toggle functionality
+        function togglePassword(id) {
+            let input = document.getElementById(id);
+            let icon = input.nextElementSibling;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        // Dark mode toggle
+        document.querySelector(".dark-mode-icon").addEventListener("click", function() {
+            document.body.classList.toggle("dark-mode");
+            var themeIcon = document.getElementById("theme-icon");
+            if (document.body.classList.contains("dark-mode")) {
+                themeIcon.classList.remove("fa-moon");
+                themeIcon.classList.add("fa-sun");
+            } else {
+                themeIcon.classList.remove("fa-sun");
+                themeIcon.classList.add("fa-moon");
+            }
+        });
+
+        $(document).ready(function() {
+            // District/Place AJAX
+            $("#sel_district").change(function() {
+                var did = $(this).val();
+                var ur = "{% url 'Guest:ajaxplace' %}";
+                $.ajax({
+                    url: ur,
+                    data: { did: did },
+                    success: function(data) {
+                        $("#sel_place").html(data);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("District AJAX Error: " + error);
+                    }
+                });
+            });
+
+            // Form submission
+            $("#mvdRegistrationForm").submit(function(event) {
+                event.preventDefault();
+                var password = $("#password").val();
+                var repassword = $("#repassword").val();
+                if (password !== repassword) {
+                    alert("Passwords do not match!");
+                    return false;
+                }
+
+                var email = $("#email").val();
+                var form = this;
+                $.ajax({
+                    url: "{% url 'Guest:check_mvd_email' %}",
+                    type: "POST",
+                    data: {
+                        'email': email,
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.exists) {
+                            alert("Email Already Exists");
+                            return false;
+                        } else {
+                            submitForm(form);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error checking email: " + error);
+                    }
+                });
+            });
+
+            function submitForm(form) {
+                $(".form_wrapper").hide();
+                $("body").append(`
+                    <div id="processing" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; text-align: center;">
+                        <h3>Processing...</h3>
+                        <img src="https://i.gifer.com/4V0b.gif" width="100">
+                    </div>
+                `);
+
+                var formData = new FormData(form);
+                $.ajax({
+                    url: "{% url 'Guest:mvdregistration' %}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        var $response = $(response);
+                        if ($response.find('#success').val() === 'true') {
+                            setTimeout(function() {
+                                $("#processing").html('<h3 style="color:#003366;">Registration successful! Please check your email.</h3>');
+                                setTimeout(function() {
+                                    $("#processing").remove();
+                                    window.location = "{% url 'Guest:login' %}";
+                                }, 2000);
+                            }, 2000);
+                        } else {
+                            $("#processing").remove();
+                            $(".form_wrapper").html($response.find('.form_wrapper').html());
+                            $(".form_wrapper").show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $("#processing").remove();
+                        $(".form_wrapper").show();
+                        alert("An error occurred: " + error);
+                    }
+                });
+            }
+        });
+
+        {% if msg %}
+            alert('{{msg}}');
+        {% endif %}
+        {% if msg1 %}
+            alert('{{msg1}}');
+        {% endif %}
+    </script>
+</body>
+</html>

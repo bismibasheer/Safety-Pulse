@@ -1,0 +1,334 @@
+{% extends 'MVD/Header.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Complaint</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #dc3545;
+            --primary-hover: #c82333;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --text-color: #495057;
+            --text-light: #6c757d;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            margin: auto;
+            color: var(--text-color);
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .containerss {
+            width: 1300px;
+            margin: 30px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            animation: floatIn 1s ease-out both;
+        }
+        
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .page-heading {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            animation: bounceIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .page-heading i {
+            font-size: 1.8rem;
+            animation: rotateIn 1s ease infinite;
+        }
+        
+        @keyframes rotateIn {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        .complaint-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin-top: 20px;
+        }
+        
+        .complaint-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            animation: slideInLeft 0.5s ease-out both;
+        }
+        
+        .complaint-table td {
+            padding: 12px 15px;
+            background-color: white;
+            border-radius: 6px;
+            text-align: center;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .complaint-table tr {
+            animation: flipInX 0.7s ease-out both;
+            animation-delay: calc(var(--row-index) * 0.1s);
+        }
+        
+        @keyframes flipInX {
+            0% {
+                opacity: 0;
+                transform: rotateX(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateX(0deg);
+            }
+        }
+        
+        .complaint-table tr:hover td {
+            background-color: #f8d7da;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+        
+        .action-link:hover::before {
+            left: 100%;
+        }
+        
+        .action-link:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .proof-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .proof-link:hover {
+            color: var(--primary-hover);
+            transform: scale(1.1);
+        }
+        
+        /* Fullscreen Image Styles */
+        .fullscreen-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .fullscreen-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            animation: zoomIn 0.3s ease-out;
+        }
+        
+        @keyframes zoomIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-btn:hover {
+            background: var(--primary-hover);
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        @media (max-width: 992px) {
+            .containerss {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            .page-heading {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .complaint-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .complaint-table th, 
+            .complaint-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="containerss">
+        <form enctype="multipart/form-data" method="post">
+            {%csrf_token%}
+            <h2 class="page-heading">
+                <i class="fas fa-exclamation-triangle"></i> New Complaints
+            </h2>
+            <table class="complaint-table">
+                <thead>
+                    <tr>
+                        <th>Sl.no</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>User Proof</th>
+                        <th>Vehicle Number</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>File</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in complaint %}
+                    <tr style="--row-index: {{forloop.counter0}}">
+                        <td>{{forloop.counter}}</td>
+                        <td>{{i.User.user_name}}</td>
+                        <td>{{i.User.user_email}}</td>
+                        <td>{{i.User.user_contact}}</td>
+                        <td><span class="proof-link" onclick="showFullscreen('{{i.User.user_proof.url}}')">View Proof</span></td>
+                        <td>{{i.vehicle_number.vehicle_number}}</td>
+                        <td>{{i.Category.category_name}}</td>
+                        <td>{{i.complaint_description}}</td>
+                        <td><span class="proof-link" onclick="showFullscreen('{{i.complaint_photo.url}}')">View File</span></td>
+                        <td>
+                            <a href="{% url 'MVD:replycomplaint' i.id %}" class="action-link">
+                                <i class="fas fa-reply"></i> Reply
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+    
+    <!-- Fullscreen Overlay -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay" onclick="hideFullscreen()">
+        <img src="" alt="Fullscreen view" class="fullscreen-image" id="fullscreenImage">
+        <button class="close-btn" onclick="hideFullscreen(event)"><i class="fas fa-times"></i></button>
+    </div>
+
+    <script>
+        function showFullscreen(url) {
+            const overlay = document.getElementById('fullscreenOverlay');
+            const image = document.getElementById('fullscreenImage');
+            image.src = url;
+            overlay.style.display = 'flex';
+            event.stopPropagation();
+        }
+
+        function hideFullscreen(event) {
+            const overlay = document.getElementById('fullscreenOverlay');
+            overlay.style.display = 'none';
+            if (event) event.stopPropagation();
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'User/Header.html' %}
+{% block content %}
+<style>
+    /* Basic Reset */
+    h1, h2, h3, p, table, textarea, input {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Container for content */
+    .content-wrappers {
+       
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        flex-direction: column;
+        padding: 100px;
+    }
+
+    /* Form Styling */
+    form {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 200%;
+        max-width: 800px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    form h2 {
+        color: #008080; /* Teal for header */
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+        font-weight: 800;
+        width: 300%;
+        max-width: 900px;
+        
+    }
+
+    textarea {
+        width: 100%;
+        max-width: 500px;
+        padding: 10px;
+        border: 2px solid #008080; /* Teal border */
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+        resize: vertical;
+        margin: 0 auto;
+        display: block;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    textarea:focus {
+        border-color: #006666; /* Darker teal on focus */
+        box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.25); /* Teal glow */
+    }
+
+    input[type="submit"] {
+        background-color: #008080; /* Teal button */
+        color: #fff; /* White text for contrast */
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #006666; /* Darker teal on hover */
+        transform: translateY(-2px); /* Slight lift */
+    }
+
+    /* Feedback Table Styling */
+    .feedback-table {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 200%;
+        max-width: 800px;
+        margin-bottom: 2rem;
+    }
+
+    .feedback-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .feedback-table th {
+        background: linear-gradient(to right, #008080, #006666); /* Teal gradient */
+        color: #fff; /* White text for contrast */
+        padding: 12px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .feedback-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .feedback-table tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .feedback-table tr:hover {
+        background: #e6f3f3; /* Light teal on hover */
+    }
+
+   
+    /* footer {
+        width: 100%;
+        max-width: 800px;
+        text-align: center;
+        padding: 1rem;
+        background: #008080; 
+        color: #fff; 
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    footer p {
+        font-size: 0.9rem;
+    } */
+</style>
+
+<div class="content-wrappers">
+    <form action="" method="post">
+        {% csrf_token %}
+        <center><h2>Feedback Form</h2></center>
+        <textarea name="txt_content" placeholder="Enter your feedback here..." id="content" style="height: 150px;"></textarea>
+        <input type="submit" value="Submit" id="submit">
+    </form>
+
+    <div class="feedback-table">
+        <table border="1">
+            <tr>
+                <th>#</th>
+                <th>Content</th>
+            </tr>
+            {% for i in feedback %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{i.feedback_content}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- <footer>
+        <p>&copy; 2025 Feedback System. All rights reserved.</p>
+    </footer> -->
+</div>
+{% endblock content %}

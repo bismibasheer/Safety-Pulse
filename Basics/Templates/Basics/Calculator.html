@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action=""  method="post">
+       {%csrf_token%}
+        <table border="1">
+            <tr><td>Enter the 1st Number    <input type="number" name="txt_num1"></td></tr>
+            <tr><td>Enter the 2nd Number<input type="number" name="txt_num2"></td></tr>
+            <tr><td colspan ="2" align="center">
+            <input type="submit" name="btn_submit" value="+">
+            <input type="submit" name="btn_submit" value="-">
+            <input type="submit" name="btn_submit" value="*">
+            <input type="submit" name="btn_submit" value="/"></td></tr>
+            <tr><th>Result</th><td>{{result}}</td></tr>
+        </table>
+    </form>
+</body>
+</html>

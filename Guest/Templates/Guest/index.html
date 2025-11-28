@@ -1,0 +1,651 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SAFETY PULSE</title>
+
+    <!-- CSS FILES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;300;400;700;900&display=swap"
+        rel="stylesheet">
+
+    <link href="{% static 'Main/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Main/css/bootstrap-icons.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'Main/css/magnific-popup.css' %}">
+
+    <link href="{% static 'Main/css/aos.css' %}" rel="stylesheet">
+
+    <link href="{% static 'Main/css/templatemo-nomad-force.css'%}" rel="stylesheet">
+
+    <!--
+
+TemplateMo 567 Nomad Force
+
+https://templatemo.com/tm-567-nomad-force
+
+-->
+</head>
+
+<body>
+
+    <main>
+
+        <section class="hero" id="hero">
+            <div class="heroText">
+                <h1 class="text-white mt-5 mb-lg-4" data-aos="zoom-in" data-aos-delay="800">
+                    Safety Pulse
+                </h1>
+
+                <p class="text-secondary-white-color" data-aos="fade-up" data-aos-delay="1000">
+                    Report violations and help create safer communities<strong class="custom-underline"></strong>
+                </p>
+            </div>
+
+            <div class="videoWrapper">
+                <video autoplay="" loop="" muted="" class="custom-video"
+                    poster="videos/792bd98f3e617786c850493560e11c45.jpg">
+                    <source src="{% static 'Main/videos/3121459-uhd_3840_2160_24fps.mp4'%}" type="video/mp4">
+
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="overlay"></div>
+        </section>
+
+        <nav class="navbar navbar-expand-lg bg-light shadow-lg">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <strong>Safety Pulse</strong>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#hero">About </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">Content</a>
+                        </li>
+
+                        <li class="nav-item"><a class="nav-link" href="#portfolio">Safety Insights</a></li>
+                        <style>
+                            .navbar-nav .nav-item .nav-link::after {
+                                content: none !important;
+                            }
+
+                            .navbar-nav .nav-item .nav-link:focus,
+                            .navbar-nav .nav-item .nav-link:active {
+                                outline: none !important;
+                                box-shadow: none !important;
+                                background: transparent !important;
+                            }
+                        </style>
+
+
+                        <!-- Navigation Bar Styles -->
+                        <style>
+                            /* Navbar links - Make them black */
+                            .nav-item .nav-link {
+                                font-weight: bold;
+                                color: black !important;
+                                text-align: center;
+                            }
+
+                            /* Dropdown menu styling */
+                            .dropdown-menu {
+                                background-color: black !important;
+                                border: none;
+                                text-align: center;
+                            }
+
+                            /* Dropdown item styling */
+                            .dropdown-item {
+                                color: yellow !important;
+                                font-weight: bold;
+                            }
+
+                            /* Hover effect for dropdown items */
+                            .dropdown-item:hover {
+                                background-color: yellow !important;
+                                color: black !important;
+                            }
+
+                            /* Navbar Dropdown Styling */
+                            .dropdown-menu {
+                                background-color: #333 !important;
+                                border-radius: 8px;
+                                border: none;
+                                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                                padding: 10px 0;
+                            }
+
+                            .dropdown-item {
+                                color: white !important;
+                                font-weight: bold;
+                                padding: 10px 20px;
+                                transition: background 0.3s ease-in-out;
+                            }
+
+                            .dropdown-item:hover {
+                                background-color: #ffcc00 !important;
+                                color: black !important;
+                            }
+                        </style>
+
+
+                        <!-- Navigation Bar Items -->
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold text-black text-center" href="{% url 'Guest:login' %}">Sign
+                                In</a>
+                        </li>
+
+                        <!-- Sign Up Dropdown Menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-bold text-black text-center" href="#"
+                                id="signupDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                Sign Up
+                            </a>
+                            <div class="dropdown-menu text-center" aria-labelledby="signupDropdown">
+                                <a class="dropdown-item" href="{% url 'Guest:UserRegister' %}">User Registration</a>
+                                <a class="dropdown-item" href="{% url 'Guest:mvdregistration' %}">MVD Registration</a>
+                                <a class="dropdown-item" href="{% url 'Guest:RtoRegister' %}">RTO Registration</a>
+                            </div>
+                        </li>
+                </div>
+            </div>
+        </nav>
+
+        <section class="section-padding pb-0" id="about">
+            <div class="container mb-5 pb-lg-5">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-3" data-aos="fade-up">About Safety Pulse
+
+                            <div class="row">
+                                <div class="col-lg-6 col-12 mt-3 mb-lg-5">
+                                    <p class="me-4" data-aos="fade-up" data-aos-delay="300">
+                                        Safety Pulse is an innovative platform designed to empower users in reporting
+                                        rule violations, helping to prevent accidents and promote public safety.
+                                        By enabling real-time reporting and monitoring, we aim to create a more
+                                        responsible and secure environment.
+                                        <br><br>
+                                        Our system ensures adherence to safety regulations through swift action and
+                                        accountability, fostering a culture of compliance and awareness.
+                                        Join us in making communities safer, one report at a time.
+                                    </p>
+                                </div>
+
+                                <div class="col-lg-6 col-12 mt-lg-3 mb-lg-5">
+                                    <p data-aos="fade-up" data-aos-delay="500">
+                                        With Safety Pulse, every individual becomes a guardian of safety, contributing
+                                        to a smarter, more vigilant society where rule violations are addressed before
+                                        they lead to harm.
+                                    </p>
+                                </div>
+                            </div>
+
+
+                    </div>
+                </div>
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Image Container -->
+                        <div class="col-lg-3 col-12 p-0">
+                            <div class="media-container">
+                                <img src="{% static 'Main/images/pexels-dante-juhasz-62201650-14171590.jpg'%}"
+                                    class="media-size" alt="">
+                            </div>
+                        </div>
+
+                        <!-- Text Section -->
+                        <div class="col-lg-3 col-12 bg-dark d-flex align-items-center justify-content-center">
+                            <div class="text-center py-5 px-4">
+                                <h3 class="text-white mb-3" data-aos="fade-up">Creators and Visionaries.</h3>
+                                <p class="text-secondary-white-color mb-3" data-aos="fade-up">
+                                    Committed to expertise and excellence in every step.
+                                </p>
+                                <div class="mt-3 custom-links">
+                                    <a href="#news" class="text-white custom-link d-block mb-2" data-aos="zoom-in"
+                                        data-aos-delay="100">
+                                        Insights & Updates
+                                    </a>
+                                    <a href="#contact" class="text-white custom-link d-block" data-aos="zoom-in"
+                                        data-aos-delay="300">
+                                        Collaborate & Grow
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Carousel -->
+                        <div class="col-lg-6 col-12 p-0">
+                            <section id="safetyImageCarousel" class="carousel slide carousel-fade"
+                                data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <div class="carousel-item active">
+                                        <div class="media-container">
+                                            <img src="{% static 'Main/images/what-is-the-presidential-alert-system-new.jpg'%}"
+                                                class="media-size" alt="Road Safety Awareness">
+                                        </div>
+                                        <div class="video-caption bg-warning text-center py-2">
+                                            <h3 class="text-white mb-0">Road Safety Measures</h3>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="media-container">
+                                            <img src="{% static 'Main/images/Occupational-safety-and-health-agency-guide-to-wearing-a-safety-helmet.jpg'%}"
+                                                class="media-size" alt="Importance of Wearing Helmets">
+                                        </div>
+                                        <div class="video-caption bg-primary text-center py-2">
+                                            <h3 class="text-white mb-0">Importance of Wearing Helmets</h3>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="media-container">
+                                            <img src="{% static 'Main/images/Pedestrian-Safety-Tips.jpg'%}"
+                                                class="media-size" alt="Pedestrian Safety Rules">
+                                        </div>
+                                        <div class="video-caption bg-success text-center py-2">
+                                            <h3 class="text-white mb-0">Pedestrian Safety Rules</h3>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="media-container">
+                                            <img src="{% static 'Main/images/smngoz5rh3j2emh7c.6bc69e6b.jpg'%}"
+                                                class="media-size" alt="Common Traffic Violations">
+                                        </div>
+                                        <div class="video-caption bg-info text-center py-2">
+                                            <h3 class="text-white mb-0">Common Traffic Violations</h3>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <div class="media-container">
+                                            <img src="{% static 'Main/images/safety-driving-tips-traffic-regulation-600nw-2191525551.jpg'%}"
+                                                class="media-size" alt="Emergency Response Tips">
+                                        </div>
+                                        <div class="video-caption bg-danger text-center py-2">
+                                            <h3 class="text-white mb-0">Emergency Response Tips</h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="carousel-control-prev" type="button"
+                                    data-bs-target="#safetyImageCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+
+                                <button class="carousel-control-next" type="button"
+                                    data-bs-target="#safetyImageCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </section>
+                        </div>
+
+
+                        <style>
+                            /* Ensures the image and videos are of equal size */
+                            .media-container {
+                                width: 100%;
+                                height: 400px;
+                                /* Set a fixed height */
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                overflow: hidden;
+                            }
+
+                            .media-size {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                /* Ensures scaling without distortion */
+                            }
+                        </style>
+                        <section class="section-padding" id="portfolio">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-12 text-center">
+                                        <h2 class="mb-5" data-aos="fade-up">Safety Insights</h2>
+                                    </div>
+
+                                    <div class="col-lg-6 col-12">
+                                        <div class="portfolio-thumb mb-5" data-aos="fade-up">
+                                            <div class="video-container">
+                                                <video id="safetyVideo1" width="400">
+                                                    <source src="{% static 'Main/videos/videoplayback (1).mp4'%}"
+                                                        type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <button class="play-btn" id="playBtn1"
+                                                    onclick="togglePlayPause('safetyVideo1', 'playBtn1')">
+                                                    ▶️
+                                                </button>
+                                            </div>
+                                            <div class="portfolio-info">
+                                                <h4 class="portfolio-title mb-0">Road Safety Measures</h4>
+                                                <p class="text-danger">Traffic Regulations</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="portfolio-thumb" data-aos="fade-up">
+                                            <div class="video-container">
+                                                <video id="safetyVideo2" width="400">
+                                                    <source src="{% static 'Main/videos/videoplayback.mp4'%}"
+                                                        type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <button class="play-btn" id="playBtn2"
+                                                    onclick="togglePlayPause('safetyVideo2', 'playBtn2')">
+                                                    ▶️
+                                                </button>
+                                            </div>
+
+
+                                            <div class="portfolio-info">
+                                                <h4 class="portfolio-title mb-0">Importance of Helmets</h4>
+                                                <p class="text-success">Safety Awareness</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-12">
+                                        <div class="portfolio-thumb mt-5 mt-lg-0 mb-5" data-aos="fade-up">
+                                            <div class="video-container">
+                                                <video id="safetyVideo3" width="400">
+                                                    <source src="{% static 'Main/videos/videoplayback3.mp4'%}"
+                                                        type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <button class="play-btn" id="playBtn3"
+                                                    onclick="togglePlayPause('safetyVideo3', 'playBtn3')">
+                                                    ▶️
+                                                </button>
+                                            </div>
+
+                                            <div class="portfolio-info">
+                                                <h4 class="portfolio-title mb-0">Pedestrian Safety Rules</h4>
+                                                <p class="text-warning">Public Awareness</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="portfolio-thumb" data-aos="fade-up">
+                                            <div class="video-container">
+                                                <video id="safetyVideo4" width="400">
+                                                    <source src="{% static 'Main/videos/videoplayback5.mp4'%}"
+                                                        type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <button class="play-btn" id="playBtn4"
+                                                    onclick="togglePlayPause('safetyVideo4', 'playBtn4')">
+                                                    ▶️
+                                                </button>
+                                            </div>
+
+                                            <div class="portfolio-info">
+                                                <h4 class="portfolio-title mb-0">Common Traffic Violations</h4>
+                                                <p class="text-info">Law Enforcement</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <style>
+                            .video-container {
+                                position: relative;
+                                display: inline-block;
+                            }
+
+                            .play-btn {
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                /* Centering */
+                                background-color: rgba(0, 0, 0, 0.7);
+                                color: white;
+                                border: none;
+                                padding: 15px;
+                                cursor: pointer;
+                                font-size: 24px;
+                                border-radius: 50%;
+                                width: 50px;
+                                height: 50px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            .play-btn:hover {
+                                background-color: rgba(0, 0, 0, 0.9);
+                            }
+                        </style>
+
+                        <script>
+                            function togglePlayPause(videoId, buttonId) {
+                                var video = document.getElementById(videoId);
+                                var button = document.getElementById(buttonId);
+
+                                if (video.paused) {
+                                    video.play();
+                                    button.innerHTML = "⏸️"; // Pause symbol
+                                } else {
+                                    video.pause();
+                                    button.innerHTML = "▶️"; // Play symbol
+                                }
+                            }
+
+
+                        </script>
+
+
+                        <!-- News & Alerts Section -->
+
+
+                        <style>
+                            /* Ensure images take up full width and maintain aspect ratio */
+                            .news-image {
+                                width: 100%;
+                                /* 100% width of the container */
+                                height: 250px;
+                                /* Fixed height for the image */
+                                object-fit: cover;
+                                /* Ensures the image covers the entire box without distortion */
+                            }
+
+                            /* Container for the news items */
+                            .news-thumb {
+                                position: relative;
+                                overflow: hidden;
+                                margin-bottom: 15px;
+                            }
+
+                            /* Categories inside images */
+                            .news-category {
+                                position: absolute;
+                                top: 10px;
+                                left: 10px;
+                                padding: 5px 15px;
+                                font-size: 14px;
+                                font-weight: bold;
+                                border-radius: 5px;
+                            }
+
+                            .bg-danger {
+                                background-color: #dc3545;
+                            }
+
+                            .bg-primary {
+                                background-color: #007bff;
+                            }
+
+                            .bg-success {
+                                background-color: #28a745;
+                            }
+
+                            .text-white {
+                                color: white;
+                            }
+
+                            /* Info for the title and text below image */
+                            .news-text-info {
+                                position: absolute;
+                                bottom: 10px;
+                                left: 10px;
+                                right: 10px;
+                                background-color: rgba(0, 0, 0, 0.5);
+                                padding: 10px;
+                                color: white;
+                            }
+
+                            .news-title {
+                                font-size: 18px;
+                                font-weight: bold;
+                            }
+
+                            .news-title-link {
+                                color: white;
+                                text-decoration: none;
+                            }
+
+                            .news-title-link:hover {
+                                text-decoration: underline;
+                            }
+
+                            /* Padding for the section */
+                            .section-padding {
+                                padding: 60px 0;
+                            }
+
+                            .bg-light {
+                                background-color: #f8f9fa;
+                            }
+
+                            /* Layout for smaller screens (adjustments for smaller devices) */
+                            @media (max-width: 768px) {
+                                .news-two-column {
+                                    flex-direction: column;
+                                    /* Stack the news items on mobile screens */
+                                }
+
+                                /* Adjust image height for smaller screens */
+                                .news-image {
+                                    height: 200px;
+                                    /* Reduce height on smaller screens */
+                                }
+                            }
+                        </style>
+                        </head>
+
+                        <body>
+
+
+
+    </main>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .text-warning {
+            color: orange;
+        }
+
+        .containers {
+            
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-content: stretch;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 5%;
+        }
+    </style>
+<h3 align="center">Rating</h3> <br>
+    <div class="containers">
+        
+
+        {% for j in datas %}
+        {% for k in ar %} {% if k <= j %} <i class="fa-solid fa-star text-warning"></i>
+            {% else %}
+            <i class="fa-solid fa-star star-light"></i>
+            {% endif %} {% endfor %}
+            {% endfor %}
+    </div>
+
+
+    <main>
+        <!-- Footer -->
+        <footer class="site-footer bg-dark text-white py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 text-center text-md-start">
+                        <h5>
+                            <i class="bi-geo-alt-fill me-2"></i>
+                            Safety Pulse Initiative, Global Outreach
+                        </h5>
+                        <p class="text-muted">Ensuring public safety through digital reporting and awareness.</p>
+                        <a href="mailto:contact@safetypulse.com"
+                            class="custom-link text-warning">contact@safetypulse.com</a>
+                    </div>
+                    <div class="col-lg-3 col-md-3 text-center">
+                        <p class="mb-0">Copyright © Safety Pulse 2025</p>
+                    </div>
+                    <div class="col-lg-3 col-md-3 text-center text-md-end">
+                        <ul class="social-icon list-inline">
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-facebook"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-twitter"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-whatsapp"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-instagram"></a></li>
+                            <li class="list-inline-item"><a href="#" class="social-icon-link bi-youtube"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JAVASCRIPT FILES -->
+    <script src="{% static 'Main/js/jquery.min.js'%}"></script>
+    <script src="{% static 'Main/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static 'Main/js/jquery.sticky.js'%}"></script>
+    <script src="{% static 'Main/js/aos.js'%}"></script>
+    <script src="{% static 'Main/js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'Main/js/magnific-popup-options.js'%}"></script>
+    <script src="{% static 'Main/js/scrollspy.min.js'%}"></script>
+    <script src="{% static 'Main/js/custom.js'%}"></script>
+
+</body>
+
+</html>
+<style>
+    .portfolio-image {
+        width: 100%;
+        height: 300px;
+        /* Adjust height as needed */
+        object-fit: cover;
+    }
+</style>

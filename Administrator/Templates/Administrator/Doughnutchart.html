@@ -1,0 +1,166 @@
+{% extends 'Administrator/Head.html' %}
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  :root {
+    --purple-700: #6d28d9;
+    --purple-800: #5b21b6;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--purple-700), var(--purple-800));
+    color: white;
+    padding: 2rem;
+    border-radius: 0 0 1rem 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    transform: rotate(30deg);
+    animation: shine 8s infinite linear;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 svg {
+    width: 2rem;
+    height: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .chart-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 40px 30px;
+    background: linear-gradient(135deg, #ffffff, #f9f9ff);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .chart-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .chart-wrapper {
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  @keyframes shine {
+    0% { transform: rotate(30deg) translate(-10%, -10%); }
+    100% { transform: rotate(30deg) translate(10%, 10%); }
+  }
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <h1>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 2a10 10 0 0 1 10 10"></path>
+        <path d="M12 12L12 2"></path>
+      </svg>
+      Complaint Status Overview
+    </h1>
+  </div>
+</div>
+
+
+<div class="chart-container">
+  <div class="chart-wrapper">
+    <canvas id="complaintChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartData = {{ data|safe }};
+
+  const labels = chartData.map(item => item.label);
+  const values = chartData.map(item => item.value);
+
+  const ctx = document.getElementById('complaintChart').getContext('2d');
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Complaints',
+        data: values,
+        backgroundColor: ['#7c3aed', '#facc15'],
+        borderColor: '#fff',
+        borderWidth: 2,
+        hoverOffset: 15
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: {
+              family: 'Poppins',
+              size: 14,
+              weight: '500'
+            },
+            color: '#6b21a8'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Solved vs Pending Complaints',
+          color: '#6b21a8',
+          font: {
+            size: 22,
+            family: 'Poppins',
+            weight: '600'
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock content %}

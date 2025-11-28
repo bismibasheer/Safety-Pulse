@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AjaxSearch</title>
+</head>
+<body>
+    <form action="" method="post">
+<table border="1" align="center">
+    <tr><th>#</th>
+       <th> Name</th>
+       <th>Email</th>
+       <th>Contact</th>
+       <th>Address</th>
+       <th>District</th>
+       <th>place</th>
+       <th>Photo </th>
+       <th colspan="2" align="center">Action</th></tr>
+   </tr>
+    {% for i in mvd %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.mvd_name}}</td>
+            <td>{{i.mvd_email}}</td>
+            <td>{{i.mvd_contact}}</td>
+            <td>{{i.mvd_address}}</td>
+            <td>{{i.place.district.district_name}}</td>
+            <td>{{i.place.place_name}}</td>
+            <td><img src="{{i.mvd_photo.url}}" alt="photo" style="width:150px; height: 150px;"></td>
+            <td><a href="{% url 'User:postcomplaint' i.id  %}">Complaint</a></td>
+          
+        </tr>
+
+    
+{% endfor %}
+</table>

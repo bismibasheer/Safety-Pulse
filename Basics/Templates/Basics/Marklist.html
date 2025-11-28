@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+        {%csrf_token%}
+        <table border="1" align="center">
+            <tr>
+                <th>First Name</th>
+                <td><input type="text" name="txt_fname" ></td>
+            </tr>
+            <tr>
+                <th>Last Name</th>
+                <td><input type="text" name="txt_lname" ></td>
+            </tr>
+            <tr>
+                <th>Gender</th>
+                <td><input type="radio" name="txt_gender" value="Male">Male
+                <input type="radio" name="txt_gender" value="Female" >Female</td>
+            </tr>
+            <tr>
+                <th>Department</th>
+                
+                <td>
+                    <select id="department" name="txt_dept">
+                        
+                    <option value="MCA">MCA</option>
+                    <option value="MBA">MBA</option>
+                    <option value="MCOM">MCOM</option>
+                    <option value="MSW">MSW</option>
+                </select></td>
+            </tr>
+            <tr>
+                <th>Mark 1</th>
+                <td><input type="number" name="txt_mark1" ></td>
+            </tr>
+            <tr>
+                <th>Mark 2</th>
+                <td><input type="number" name="txt_mark2" ></td>
+            </tr>
+            <tr>
+                <th>Mark 3</th>
+                <td><input type="number" name="txt_mark3" ></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" name="btn_submit" value="Submit">
+                <input type="submit" name="btn_cancel" value="Cancel"></td>
+            </tr>
+           <tr> <th> First Name</th><td>{{fname}}</td></tr>
+           <tr> <th> Last Name</th><td>{{lname}}</td></tr>
+           <tr> <th> Department</th><td>{{dept}}</td></tr>
+           <tr> <th> Total</th><td>{{total}}</td></tr>
+           <tr> <th> Percentage</th><td>{{percentage}}</td></tr>
+           <tr> <th>Grade</th><td>{{grade}}</td></tr>
+</table>
+</body>
+</html>

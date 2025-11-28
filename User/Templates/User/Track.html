@@ -1,0 +1,341 @@
+{% extends 'User/Header.html' %}
+{% block content %}
+{% load mathfilters %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="container-main">
+    <h2 class="mb-4 text-center" style="color: #008080;">
+        <i class="fas fa-list-alt me-2"></i>
+        Complaints Overview
+      </h2>
+      
+
+    <!-- Complaint Card -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-exclamation-circle me-2"></i> Complaint #{{ forloop.counter }}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-md-3 text-center">
+                                {% if complaint.complaint_photo %}
+                                <img src="{{ complaint.complaint_photo.url }}" alt="Proof"
+                                    class="img-fluid w-100 animate__animated animate__fadeIn">
+                                {% else %}
+                                <div class="text-muted animate__animated animate__fadeIn">
+                                    <i class="fas fa-image me-2"></i> No Image
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <p><strong><i class="fas fa-user-shield me-1"></i> MVD:</strong> 
+                                    {{complaint.MVD.mvd_name }} ({{ complaint.MVD.mvd_contact }})</p>
+                                <p><strong><i class="fas fa-car me-1"></i> Vehicle Number:</strong>
+                                    {{complaint.vehicle_number.vehicle_number}}</p>
+                                <p><strong><i class="fas fa-tags me-1"></i> Category:</strong> {{complaint.Category.category_name }}</p>
+                                <p><strong><i class="fas fa-align-left me-1"></i> Description:</strong> <small
+                                        class="text-muted">{{complaint.complaint_description|truncatechars:80}}</small></p>
+
+                                <p>
+                                    <strong><i class="fas fa-question-circle me-1"></i> Status:</strong>
+                                    {% if complaint.reply_complaint == "" %}
+                                    <span class="status-pending"><i class="fas fa-clock me-1"></i> Pending</span>
+                                    {% else %}
+                                    <span class="status-resolved"><i class="fas fa-check-circle me-1"></i>
+                                        Replied</span>
+                                    {% endif %}
+                                </p>
+
+                                <p>
+                                    <strong><i class="fas fa-reply me-1"></i> Reply:</strong><br>
+                                    {% if complaint.reply_complaint != "" %}
+                                    <small>{{ complaint.reply_complaint }}</small>
+                                    {% else %}
+                                    <span class="text-muted">Not replied yet</span>
+                                    {% endif %}
+                                </p>
+
+                                <p>
+                                    <strong><i class="fas fa-receipt me-1"></i> Payment:</strong>
+                                    {% if complaint.complaint_payment == 1 %}
+                                    <span class="status-pending">Chellan Generated</span>
+                                    {% elif complaint.complaint_payment == 2 %}
+                                    <span class="status-resolved">
+                                        <i class="fas fa-check-circle me-1"></i> Completed –  Amount <strong>₹{{complaint.complaint_amount }}</strong>
+                                    </span>
+                                    {% else %}
+                                    <span class="status-pending">Pending</span>
+                                    {% endif %}
+                                </p>
+
+                                <!-- Progress Tracker inside form -->
+                                <div class="progress-tracker mt-4">
+                                    <div class="progress-fill" style="
+                                        width:
+                                            {% if complaint.complaint_status == 1 and complaint.complaint_payment == 0 %}25%
+                                            {% elif complaint.complaint_status == 2 and complaint.complaint_payment == 0 %}50%
+                                            {% elif complaint.complaint_status == 2 and complaint.complaint_payment == 1 %}75%
+                                            {% elif complaint.complaint_status == 3 and complaint.complaint_payment == 0 %}50%
+                                            {% elif complaint.complaint_status == 3 and complaint.complaint_payment == 1 %}75%
+                                            {% elif complaint.complaint_status >= 2 and complaint.complaint_payment == 2 %}100%
+                                            {% else %}0%
+                                            {% endif %};
+                                    "></div>
+
+                                    <div
+                                        class="step {% if complaint.complaint_status >= 1 %}completed{% elif complaint.complaint_status == 0 %}active{% endif %}">
+                                        <div class="circle"><i class="fas fa-check-circle me-1"></i></div>
+                                        <div class="label"> Complaint Accepted
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="step {% if complaint.complaint_status == 1 %}active{% elif complaint.complaint_status >= 2 %}completed{% endif %}">
+                                        <div class="circle"><i class="fas fa-money-bill-wave me-1"></i></div>
+                                        <div class="label"> Amount Added
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="step {% if complaint.complaint_status == 2 and complaint.complaint_payment == 0 %}active {% elif complaint.complaint_payment >= 1 %}completed{% endif %}">
+                                        <div class="circle"><i class="fas fa-file-invoice me-1"></i></div>
+                                        <div class="label"> Chellan Generated
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="step {% if complaint.complaint_payment == 1 %} active {% elif complaint.complaint_payment == 2 %} completed {% endif %}">
+                                        <div class="circle"><i class="fas fa-wallet me-1"></i></div>
+                                        <div class="label"> Payment Done</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🌟 CSS Styling -->
+<style>
+    :root {
+        --primary: #008080;
+        --dark: #2c3e50;
+        --light: #f9f9f9;
+        --success: #28a745;
+        --pending: #ffc107;
+    }
+
+    body {
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container-main {
+        max-width: 1200px;
+        padding: 20px;
+        animation: fadeIn 1s ease-in;
+    }
+
+    h2 {
+        color: var(--dark);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        animation: slideInDown 1s ease-out;
+    }
+
+    .card {
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: #faffff;
+        animation: bounceIn 1s ease-out;
+    }
+
+    .card-header {
+        background: #008080;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 15px;
+        letter-spacing: 1px;
+    }
+
+    .status-pending {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--pending);
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        animation: pulse 1.5s infinite;
+    }
+
+    .status-resolved {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success);
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        animation: tada 2s infinite;
+    }
+
+    .progress-tracker {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 20px 0;
+        /* Adjusted margin for form integration */
+        max-width: 100%;
+        padding: 0 20px;
+        animation: zoomIn 1s ease-out;
+    }
+
+    .progress-tracker::before {
+        content: '';
+        position: absolute;
+        top: 22px;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+    }
+
+    .progress-fill {
+        position: absolute;
+        top: 22px;
+        left: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #fff566, #f1d906);
+        border-radius: 3px;
+        transition: width 0.6s ease-in-out;
+    }
+
+    .step {
+        width: 25%;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .circle {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+        background: #ccc;
+        border-radius: 50%;
+        line-height: 40px;
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .step.completed .circle {
+        background: var(--success);
+        transform: scale(1.2);
+    }
+
+    .step.active .circle {
+        background: var(--primary);
+        transform: scale(1.2);
+    }
+
+    .label {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-40px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes bounceIn {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes tada {
+        0% {
+            transform: scale(1);
+        }
+
+        10%,
+        20% {
+            transform: scale(0.9) rotate(-3deg);
+        }
+
+        30%,
+        50%,
+        70%,
+        90% {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        100% {
+            transform: scale(1) rotate(0);
+        }
+    }
+</style>
+
+<!-- Icons and Bootstrap -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
+
+{% endblock %}
